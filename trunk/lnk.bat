@@ -1,0 +1,1 @@
+.\bin\dsplnk -Z -B%1.cld  %1.cln
