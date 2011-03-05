@@ -41,7 +41,8 @@ datout  	equ     $fffe           ;location in Y memory of output file
 
 inbuf  		dsm     	BUFSIZE        ;buffer de entrada
 endinbuf	equ		*
-bits		ds			1
+bits		ds		1
+onset		ds		1
 decay		dc		0.99975
 envt		dc		0.002
 denvt		dc		0.0006
@@ -79,7 +80,7 @@ main
 ; init KS
 	move	#ksbuf,r7
 	move	#KS_BUFSIZE-1,m7
-	move	#1,y0
+	move	#0,y0
 	move	y0,y:vel
 	move	#0.005,y0
 	move	y0,y:t			
@@ -121,10 +122,10 @@ inifil		move    #inbuf,r0      ;point to input buffer
 	        jsr     ada_init            	;initialize codec
 
 ;ACA VA EL PITCH DETECT, MOTHERFUCKERS  
-		;jmp     *									  ;take a nap
-		
-        	include 'ada_init.asm'			;used to include codec initialization routines
+		jmp     *									  ;take a nap
 		include	'pitchdetector.asm'
+        	include 'ada_init.asm'			;used to include codec initialization routines
+		
 		end
 
  

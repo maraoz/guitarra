@@ -1,3 +1,3 @@
 pitchdetector		equ		*
-			brclr		#1,x:onset,*
+		;	brclr		#1,x:onset,
 			
