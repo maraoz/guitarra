@@ -5,8 +5,8 @@
       include 'intequ.asm'
       include 'ada_equ.asm'
       include 'vectors.asm' 
-	  include 'sin.asm' 
-      include 'fir'		;macro que realiza el filtrado en si
+	include 'sin.asm' 
+      include 'sig24div.asm'
 	list
 	
 ;******************************************************************************

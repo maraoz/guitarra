@@ -67,9 +67,11 @@ yesonset	bset 	#1,y:innote
 		move 	a,y:ignore
 						;flags para main
 		move	r0,r1
-		bset	#1,x:onset
+		;bset	#1,x:onset
 		move	#0.9,x0
 		move	x0,y:vel
+		move	#1,x0
+		move	x0,x:onset
 		move 	#0.999,a 		;DEBUG
 		jmp	finiupi
 
@@ -91,7 +93,7 @@ noend		move 	#0,a 			;DEBUG
 ;FIN DE ONSET DETECTION
 	
 finiupi	
-		
+		include 'ks.asm'
 		move	a,x0 
 		jmp	endisr
 	       
@@ -111,6 +113,6 @@ endisr  	movep   x0,x:M_TX00        	; write d/a data
 		movec	ssh,x1
 		nop
 		rti
-	include 'ks.asm'
+	
 
 
