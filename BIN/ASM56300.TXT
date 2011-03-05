@@ -1,0 +1,5 @@
+/* $Id: asm56300.txt,v 1.1 1998/01/09 23:11:45 russo Exp $ */
+Motorola 56300 Assembler,  Version 6.2.0, Jan 08 1998
+
+Bug fixes.
+====

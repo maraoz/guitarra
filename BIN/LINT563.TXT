@@ -1,0 +1,21 @@
+/* $Id: lint563.txt,v 1.2 1998/01/19 17:00:47 jay Exp $ */
+lint563,  Version 6.2.1, Jan 20 1998
+1.New mask sets are now covered.  The complete list is:
+CHIP       | REVISION MASK
+-----------+---------------------
+DSP56301   | 0F48S      (default)
+DSP56301   | 0F92R
+DSP56301   | 1E41B
+DSP56301   | 1F92R
+DSP56302   | 0F47S
+DSP56302   | 1F47S
+DSP56302   | 1F90S
+DSP56303   | 0F88S
+DSP56303   | 0F94R
+DSP56303   | 1F94R
+DSP56304   | 0F93S
+DSP56305   | 0F13S 
+====
+lint563,  Version 6.2.0, Jan 08 1998
+1.Just a version number change for the CD release.
+====
