@@ -1,8 +1,8 @@
 ssi_rx_isr
 	
-        movep   x:M_RX0,x0         	; Read a/d data
-        move	X:bits,y0
-        jset    #Left_ch,y0,esright 
+        	movep   x:M_RX0,x0         	; Read a/d data
+        	move	X:bits,y0
+        	jset    #Left_ch,y0,esright 
         
 ;ONSET DETECTION
 		
@@ -75,17 +75,17 @@ noend		move 	#0,a 			;DEBUG
 
 ;FIN DE ONSET DETECTION
 
-finiupi	move	a,x0
+finiupi		move	a,x0
 		jmp	endisr
 	       
 ;KARPLUS
 
 	
-esright move	#0,x0			;mute the other channel
+esright 	move	#0,x0			;mute the other channel
     
-endisr  movep   x0,x:M_TX00        	; write d/a data
-	bchg	#Left_ch,x:bits
-	rti
+endisr  	movep   x0,x:M_TX00        	; write d/a data
+		bchg	#Left_ch,x:bits
+		rti
 
 
 
