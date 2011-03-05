@@ -6,29 +6,19 @@ sin
 			movec	y0,ssl
 		
 			move	a,x0	
-			mpy		x0,x0,b
-			nop
+			mpy	x0,x0,b
 			move	b,x1
-			mpy		x0,x1,b
-			nop
+			mpy	x0,x1,b
+			move	#T1,y0	
 			move	b,y1
-			move	#T1,y0
-			mpy		y1,y0,b
-			sub		b,a
-			mpy		x1,y1,b
-			nop
-			move	b,x0
-			move	#T2,y0
-			mpy		x0,y0,b
-			nop
-			add		b,a
-			mpy		x0,x1,b
-			nop
-			move	b,x0
-			move	#T3,y0
-			mpy		x0,y0,b
-			sub		b,a
-			nop
+			mac	-y1,y0,a
+			mpy	x1,y1,b
+			move	b,x0	#T2,y0	
+			mac	x0,y0,a
+			mpy	x0,x1,b
+			move	b,x0	#T3,y0
+			mac	-x0,y0,a
+
 			
 			movec	ssl,y0
 			movec	ssh,y1
