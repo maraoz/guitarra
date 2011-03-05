@@ -68,8 +68,9 @@ yesonset	bset 	#1,y:innote
 						;flags para main
 		move	r0,r1
 		bset	#1,x:onset
-		
-		;move 	#0.999,a 		;DEBUG
+		move	#0.9,x0
+		move	x0,y:vel
+		move 	#0.999,a 		;DEBUG
 		jmp	finiupi
 
 ignoring	dec 	b
@@ -82,19 +83,18 @@ noonset		move	y:innote,y0
 		move	x:endt,b
 		cmp 	b,a
 		bge	noend
-endnote		bclr	#1,y:innotemovec	x0,ssl
+endnote		bclr	#1,y:innote
 		move	#0.999,y0
 		move	y0,y:lastmin
 noend		move 	#0,a 			;DEBUG
 
 ;FIN DE ONSET DETECTION
-
+	
 finiupi	
-		include 'ks.asm'
+		
 		move	a,x0 
 		jmp	endisr
 	       
-;KARPLUS
 
 	
 esright 	move	#0,x0			;mute the other channel
@@ -111,6 +111,6 @@ endisr  	movep   x0,x:M_TX00        	; write d/a data
 		movec	ssh,x1
 		nop
 		rti
-
+	include 'ks.asm'
 
 

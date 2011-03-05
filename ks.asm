@@ -87,7 +87,7 @@ ks_start	move	y:t,y0		;asumo que t esta en y:t, lo guardo en y0 = t
 			move	#3,x1
 			move	x1,y:ks_cnt	; Si es Nueva nota refresco x(n) con la delta. vel > 0 indica nueva nota.
 			
-ks_main		move	#0,a
+ks_main			move	#0,a
 			move	y:ks_cnt,x1
 			move	x1,b
 			tst		b
