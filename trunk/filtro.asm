@@ -4,7 +4,8 @@
       include 'ioequ.asm'
       include 'intequ.asm'
       include 'ada_equ.asm'
-      include 'vectors.asm'  
+      include 'vectors.asm' 
+	  include 'sin.asm' 
       include 'fir'		;macro que realiza el filtrado en si
 	list
 	
@@ -12,7 +13,9 @@
 
 		OPT	CEX			;Expand DC 
 
-BUFSIZE	equ	1024	
+BUFSIZE	equ	1024
+KS_BUFSIZE	equ	256
+	
 
 Left_ch	equ	0
 
@@ -56,6 +59,14 @@ denv		ds		1
 lastmin		ds		1
 ignore		ds		1
 innote		ds		1
+; variables del KS
+ksbuf		dsm	KS_BUFSIZE
+f			ds	1
+t			ds	1
+vel			ds	1
+ks_l		ds	1
+ks_b		ds	1
+ks_cnt		ds	1
 
         org     p:$100
 START
@@ -64,6 +75,14 @@ main
         	ori     #3,mr              ; mask interrupts
         	movec   #0,sp              ; clear hardware stack pointer
         	move    #0,omr             ; operating mode 0
+			
+; init KS
+	move	#ksbuf,r7
+	move	#KS_BUFSIZE-1,m7
+	move	#1,y0
+	move	y0,y:vel
+	move	#0.005,y0
+	move	y0,y:t			
 
 ;==================
 

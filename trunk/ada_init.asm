@@ -243,7 +243,7 @@ ssi_tx_isr
 ssi_txls_isr
   	bset	#Left_ch,x:bits
         rti
-
+ 
 ;************************** SSI receive ISR ********************************
 ssi_rxe_isr
         bclr    #5,x:M_SSISR0           ; Read SSISR to clear exception flag
