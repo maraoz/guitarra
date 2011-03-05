@@ -102,10 +102,11 @@ inifil		move    #inbuf,r0      ;point to input buffer
 	        jsr     ada_init            	;initialize codec
 
 ;ACA VA EL PITCH DETECT, MOTHERFUCKERS  
-		jmp     *									  ;take a nap
+		;jmp     *									  ;take a nap
+		
+		include	'pitchdetector.asm'
+        	include 'ada_init.asm'			;used to include codec initialization routines
 
-        include 'ada_init.asm'			;used to include codec initialization routines
-
-	end
+		end
 
  
