@@ -80,10 +80,12 @@ ks_start	move	y:t,y0		;asumo que t esta en y:t, lo guardo en y0 = t
 			move	b,y:ks_b
 			
 ;filtro del ks
-			move	y:vel,x0
+			move	x:onset,x0
 			move	x0,b
 			tst		b
-			ble		ks_main		
+			ble		ks_main	
+			move	#0,x0
+			move	x0,x:onset
 			move	#3,x1
 			move	x1,y:ks_cnt	; Si es Nueva nota refresco x(n) con la delta. vel > 0 indica nueva nota.
 			
