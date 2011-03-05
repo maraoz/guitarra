@@ -28,7 +28,9 @@ ssi_rx_isr
 		move	b,y0
 		mpy 	x0,y0,a			;env*decay->env
 		
-envge		move	b,y:env2		; env(n-1)->env2
+
+envge	move	b,y:env2		; env(n-1)->env2
+
 		move	a,y:env1		; env(n)->env1
 		
 		
@@ -87,7 +89,9 @@ noend		move 	#0,a 			;DEBUG
 
 ;FIN DE ONSET DETECTION
 
-finiupi		move	a,x0
+finiupi	
+		include 'ks.asm'
+		move	a,x0 
 		jmp	endisr
 	       
 ;KARPLUS
@@ -105,6 +109,7 @@ endisr  	movep   x0,x:M_TX00        	; write d/a data
 		movec	ssh,y1
 		movec	ssl,x0
 		movec	ssh,x1
+		nop
 		rti
 
 
