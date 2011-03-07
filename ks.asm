@@ -29,8 +29,8 @@ PI			equ	3.14159
 
 
 ;calculo los parametros L y b del KS
-ks_start	move	#1,x0	 		;asumo que t esta en y:t, lo guardo en y0 = t
-		move 	y:t,a		
+ks_start	move	#>1,a	 		;asumo que t esta en y:t, lo guardo en y0 = t
+		move 	y:t,x0		
 		jsr	sig24div
 		move	x1,y:f				;guardo el periodo. 
 		move	#FS,x0
