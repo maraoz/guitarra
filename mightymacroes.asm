@@ -1,7 +1,4 @@
 
-
-
-
 	STOREMN	macro	xmn			; Guardo xmn en x0 en formato MN. pisa x0,x1,a 
 
 		move	#(xmn-@cvi (xmn)),x0    ;fractional part to X0
