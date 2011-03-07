@@ -1,8 +1,8 @@
 ;=== constantes ===
 R			equ	0.995
-T1			equ	0.16667
-T2			equ	0.00833
-T3			equ	0.00002
+T1			equ	0.52360
+T2			equ	0.08225
+T3			equ	0.00615
 KS_K			equ	$004000	; 0.25
 
 ;=== isr ===
@@ -13,61 +13,46 @@ ks_start	move	#0,a
 		jsr	sig24div
 		DIVFIX
 		move	x1,y:f				;guardo la frecuencia a partir del t calculado. 
-				
+		
+		; L = floor (1/f - 0.25)
 		move 	y:t,x0		#0,a
 		move	#KS_K,a1
-		sub	x0,a				;a = 1/f - 0.5	
+		sub	x0,a				;a = 1/f - 0.25	
 		
 		and	#$FF0000,a							
 		move	a1,y:ks_l			; saco floor y guardo en ks_l
-;
-	b = sin( f * (1.5+L) - 1 ) / sin( f * (0.5-L) + 1 )
-
+		
+		; b  = sin( f * (1.5+L) - 1 ) / sin( f * (0.5-L) + 1 )
 		move	#0,a
-		move	#$018000,a1	y:ks_l,x0	; cargo 1.5
-		add	x0,a				; 1.5+L = A
+		move	#$00C000,a1	y:ks_l,x0	; cargo 0.75
+		add	x0,a				; 0.75+L = A
 		move	y:f,x0		a1,x1
 		mpy	x0,x1,a
-		MULFIX					; f*(1.5+L) = x0
+		MULFIX					; f*(0.75+L) = x0
 		move	#0,a
-		move	#$FE0000,a1
-		add	x0,a				; f * (1.5+L) - 1 = A
-			
-		sub	b,a			;calculo b
-		move 	a,y1			; y1 = -(fs/f-0.5-L) Esto sirve para el sin que divide tmb.
-		add	#1,a			; 1+ (-(fs/f-0.5-L))
-			
-		move	a,x1
-		move	#TS,x0
-		mpy	x0,x1,a		; Ts * (1-(fs/f-0.5-L))
-		move	a,x1
-		move	#PI,x0
-		mpy	x0,x1,a		; PI * Ts * (1-(fs/f-0.5-L))
-		move	a,x1
-		move	y:f,x0
-		mpy	x0,x1,a		; f * PI * Ts * (1-(fs/f-0.5-L))
+		move	#$FF0000,a1			;cargo -1
+		add	x0,a				; f * (0.75+L) - 1 = A
+		move	a1,x0
 		jsr	sin
-		move	a,y0		;y0 = sin( pi*f/fs*(1-(fs/f-0.5-L)) )
+		move	x0,y1				; Queda guardado en Y1, el valor de sin(blabla)
+
+		move	#0,a
+		move	#$004000,a1	y:ks_l,x0	; cargo 0.25
+		sub	x0,a				; 0.25-L = A
+		move	y:f,x0		a1,x1
+		mpy	x0,x1,a
+		MULFIX					; f*(0.25-L) = x0
+		move	#0,a
+		move	#$010000,a1			;cargo +1
+		add	x0,a				; f*(0.25-L) + 1 = A
+		move	a1,x0
+		jsr	sin				; Queda guardado en X0, el valor de sin(blabla)	
 		
-		move 	#-1,x0
-		mpy	x0,y1,a		;+(fs/f-0.5-L)
-		add	#1,a
-		
-		move	a,x1
-		move	#TS,x0
-		mpy	x0,x1,a		; Ts * (1+(fs/f-0.5-L))
-		move	a,x1
-		move	#PI,x0
-		mpy	x0,x1,a		; PI * Ts * (1+(fs/f-0.5-L))
-		move	a,x1
-		move	y:f,x0
-		mpy	x0,x1,a		; f * PI * Ts * (1+(fs/f-0.5-L))
-		jsr	sin
-		move	a,y1		;y1 = sin( pi*f/fs*(1+(fs/f-0.5-L)) )
-		
-		move	y0,b
-		div	y1,b		; y0 resultado b
-		move	b,y:ks_b
+		move	#0,a
+		move	y1,a1
+		jsr	sig24div
+		DIVFIX
+		move	x1,y:ks_b
 		
 ;filtro del ks
 		move	x:onset,x0
