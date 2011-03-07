@@ -13,23 +13,7 @@
 		mpy	x0,x1,a
 		move	a1,x0	
 		endm
-		
-	MOVEX0A	macro				;pisa x0,x1,a
-		move	#$008000,x1
-		mpy	x0,x1,a
-		move	a,x1
-		move	#0,a
-		move	x1,a1
-		
-		endm
-		
-	MPYMN	macro				; Multiplica x0 * x1 en formato MN y lo guarda en x0. pisa x0,x1,a 
-		
-		mpy	x0,x1,a
-		MULFIX
-		
-		endm
-		
+	
 	MULFIX	macro			;pisa x0,x1,a
 				
 		move	#>64,x0	a,x1
@@ -37,4 +21,10 @@
 		move	a1,x0
 		
 		endm
-	
+	DIVFIX	macro			;pisa x0,a
+				
+		move	#$010000,x0	
+		mpy	x0,x1,a
+		move	a1,x1
+		
+		endm	
