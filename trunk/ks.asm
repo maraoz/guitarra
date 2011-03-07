@@ -1,51 +1,41 @@
 ;=== constantes ===
-FS			equ	16000
-TS			equ	0.0000625
 R			equ	0.995
 T1			equ	0.16667
 T2			equ	0.00833
 T3			equ	0.00002
-KS_K			equ	0.5
-PI			equ	3.14159
-
-;=== variables ===
-;	org	y:
-;	ksbuf	dsm	KS_BUFSIZE
-;	f	ds	1
-;	t	ds	1
-;	vel	ds	1
-;	ks_l	ds	1
-;	ks_b	ds	1 
-;	ks_cnt	ds	1
-	
-;=== inicializacion ===
-
-;	move	#ksbuf,r7
-;	move	#KS_BUFSIZE-1,m7
-;	move	#1,y:vel
-;	move	#0.005,y:t
+KS_K			equ	$004000	; 0.25
 
 ;=== isr ===
 
-
 ;calculo los parametros L y b del KS
-ks_start	move	#>1,a	 		;asumo que t esta en y:t, lo guardo en y0 = t
-		move 	y:t,x0		
+ks_start	move	#0,a
+		move	#$010000,a1	y:t,x0 		;asumo que t esta en y:t, lo guardo en y0 = t
 		jsr	sig24div
-		move	x1,y:f				;guardo el periodo. 
-		move	#FS,x0
+		DIVFIX
+		move	x1,y:f				;guardo la frecuencia a partir del t calculado. 
 				
-		move	a,x1
-		mpy	x0,x1,a		#KS_K,b		;calculo L
+		move 	y:t,x0		#0,a
+		move	#KS_K,a1
+		sub	x0,a				;a = 1/f - 0.5	
 		
-		sub	b,a
-		move	a,b					;b = fs/f - 0.5				;vale move a,b ??
-		move	#$000000,a0			;L = a [floor(a)]
-		move	a,y:ks_l
+		and	#$FF0000,a							
+		move	a1,y:ks_l			; saco floor y guardo en ks_l
+;
+	b = sin( f * (1.5+L) - 1 ) / sin( f * (0.5-L) + 1 )
+
+		move	#0,a
+		move	#$018000,a1	y:ks_l,x0	; cargo 1.5
+		add	x0,a				; 1.5+L = A
+		move	y:f,x0		a1,x1
+		mpy	x0,x1,a
+		MULFIX					; f*(1.5+L) = x0
+		move	#0,a
+		move	#$FE0000,a1
+		add	x0,a				; f * (1.5+L) - 1 = A
 			
 		sub	b,a			;calculo b
-		move 	a,y1		; y1 = -(fs/f-0.5-L) Esto sirve para el sin que divide tmb.
-		add	#1,a		; 1+ (-(fs/f-0.5-L))
+		move 	a,y1			; y1 = -(fs/f-0.5-L) Esto sirve para el sin que divide tmb.
+		add	#1,a			; 1+ (-(fs/f-0.5-L))
 			
 		move	a,x1
 		move	#TS,x0
