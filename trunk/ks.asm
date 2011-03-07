@@ -11,9 +11,9 @@ PI			equ	3.14159
 ;=== variables ===
 ;	org	y:
 ;	ksbuf	dsm	KS_BUFSIZE
-;	f		ds	1
-;	t		ds	1
-;	vel		ds	1
+;	f	ds	1
+;	t	ds	1
+;	vel	ds	1
 ;	ks_l	ds	1
 ;	ks_b	ds	1 
 ;	ks_cnt	ds	1
