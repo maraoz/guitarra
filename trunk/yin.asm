@@ -1,20 +1,32 @@
-yin
-r1 ;dirección de inicio	
+;=== constantes ===
+MIN_CMP		equ	$00A000	;0.1	????
+IP_A0	equ		$030000	;3
+IP_A1	equ		$FC0000	;-4
+IP_A2	equ		$010000	;1
+IP_B0	equ		$020000	;2
+IP_B1	equ		$FC0000	;-4
+IP_B2	equ		$020000	;2
+
+;=== memoria ===
+r1 ;recivo la dirección de inicio
+r2,n2 ;uso este AGU	
 x:WINDOW_SIZE 	;tamaño
-x:LOOP_SIZE
+x:LOOP_SIZE		;tamaño dividido 2
 x:ACF		;resultados de tamaño 512
-x:RESULT
+x:RESULT	;para guardar el mínimo del yin
+
+;=== isr ===
 		;for n=1:N/2
 		;    d(n)=sum((x(1:N-n+1)-x(n:N)).^2);
 		;end
-		clr		n2
+yin_start		clr		n2
 		move 	x:WINDOW_SIZE,b
 		asl		b
 		move 	b,x:LOOP_SIZE
 ;;LOOP
 		do 		x:LOOP_SIZE,bigloop
 		
-		clr		a		r1,r2	r1,y0					;;
+		clr		a		r1,r2	r1,y0					;;??
 		inc		n2		
 		move	x:WINDOW_SIZE,b
 		sub		n2,b
@@ -66,7 +78,7 @@ loopagain
 		;    f=0;
 		;end
 		clr		a
-		cmp 	#0.1,y0				;??
+		cmp 	#MIN_CMP,y0				;??
 		blt		fin
 		move	n2,a
 		cmp		#1,n2
@@ -76,20 +88,21 @@ loopagain
 		clr		a
 		clr		b
 		dec		n2
-		mpy		#3,x:(r2+n2),a
-		mpy		#2,x:(r2+n2),b
+		mpy		#IP_A0,x:(r2+n2),a
+		mpy		#IP_B0,x:(r2+n2),b
 		inc		n2
-		mpy		#-4,x:(r2+n2),a		;;??
-		mpy		#-4,x:(r2+n2),b		;;??
+		mpy		#IP_A1,x:(r2+n2),a		;;??
+		mpy		#IP_B1,x:(r2+n2),b		;;??
 		inc		n2
-		mpy		#1,x:(r2+n2),a
-		mpy		#2,x:(r2+n2),b
+		mpy		#IP_A2,x:(r2+n2),a
+		mpy		#IP_B2,x:(r2+n2),b
 		div		b,a
 		add		n2,a
 		sub		#2,a	
 final	div		#FS,a
 		div		#1,a							;Resultado en a
-fin
+
+fin		rts		
 	
 	
 	
