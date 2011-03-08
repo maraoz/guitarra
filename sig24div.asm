@@ -32,4 +32,4 @@ saveq		tfr	x0,b	b0,x1	;save quo. in x1, get signed divisor
 		jclr	#23,y0,done	;go to done if remainder is positive
 		move	#$0,b0		;prevent unwanted carry
 		neg	b		;complement remainder
-		rts
+done		rts
