@@ -1,6 +1,4 @@
 ssi_rx_isr
-	
-		
 		movec	x1,ssh
 		movec	x0,ssl
 		movec	y1,ssh
@@ -10,11 +8,15 @@ ssi_rx_isr
 		movec	a2,ssh
 		
 		
-        	movep   x:M_RX0,x0         	; Read a/d data
-        	move	X:bits,y0
+        	movep   x:M_RX0,x0 	       	; Read a/d data
+        	move	x:bits,y0
         	jset    #Left_ch,y0,esright 
         
 ;ONSET DETECTION
+		clr 	a
+		move	n1,a0
+		inc	a
+		move	a0,n1
 		
 		move 	x0,a	
 
@@ -38,26 +40,26 @@ envge	move	b,y:env2		; env(n-1)->env2
 		tst 	b
 		bne	ignoring
 		
-		move 	y:env2,b		;env esta decreciendo?
+		move 	y:env2,b			;env esta decreciendo?
 		cmp 	b,a
 		blt 	nodecrece	
 		
-		move 	y:lastmin,b		;env<lastmin?
+		move 	y:lastmin,b			;env<lastmin?
 		cmp 	b,a
 		tlt 	a,b	
 		move	b,y:lastmin
 		
 nodecrece	move	y:innote,y0
 		move 	y:env2,b
-		sub 	b,a	x:denvt,b
-		cmp 	b,a	x:envt,b	;denv<denvt?
+		sub 	b,a		x:denvt,b
+		cmp 	b,a		x:envt,b	;denv<denvt?
 		blt	noonset
 		brset	#1,y0,yesonset
 		move 	y:env1,a
-		cmp 	b,a	y:lastmin,b	;env<envt?
+		cmp 	b,a	y:lastmin,b		;env<envt?
 		blt	noonset
 		sub	b,a	x:mint,b	
-		cmp	b,a			;(env-lastmin)<mint?
+		cmp	b,a				;(env-lastmin)<mint?
 		blt	noonset
 		
 yesonset	bset 	#1,y:innote
@@ -65,14 +67,13 @@ yesonset	bset 	#1,y:innote
 		move 	a,y:lastmin
 		move 	#N_IGNORE,a
 		move 	a,y:ignore
-						;flags para main
+							;flags para main
 		move	r0,r1
-		;bset	#1,x:onset
-		move	#0.9,x0
-		move	x0,y:vel
-		move	#1,x0
-		move	x0,x:onset
-		move 	#0.999,a 		;DEBUG
+		move	#0,n1
+		bset	#ONSETF,x:(r6)
+		move	y:env1,y0
+		move	y0,y:vel	
+		;move 	#0.999,a 		;DEBUG
 		jmp	finiupi
 
 ignoring	dec 	b
@@ -86,14 +87,23 @@ noonset		move	y:innote,y0
 		cmp 	b,a
 		bge	noend
 endnote		bclr	#1,y:innote
+		bset	#NENDF,x:(r6)
 		move	#0.999,y0
 		move	y0,y:lastmin
-noend		move 	#0,a 			;DEBUG
+noend		;move 	#0,a 			;DEBUG
 
 ;FIN DE ONSET DETECTION
 	
 finiupi	
-		include 'ks.asm'
+		;include 'ks.asm'
+		;debug
+		brclr	#STARTKS,x:(r6),nonote
+		bclr	#STARTKS,x:(r6)
+		move	#0.9999,x0
+		jmp	endisr
+		
+nonote		move	#0,a
+		;end debug			
 		move	a,x0 
 		jmp	endisr
 	       
