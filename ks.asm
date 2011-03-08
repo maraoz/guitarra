@@ -1,8 +1,8 @@
 ;=== constantes ===
-R			equ	0.995
-T1			equ	0.52360
-T2			equ	0.08225
-T3			equ	0.00615
+R			equ	$00FEB8
+T1			equ	$00860A	;Taylor
+T2			equ	$00150E
+T3			equ	$000193
 KS_K			equ	$004000	; 0.25
 
 ;=== isr ===
@@ -52,50 +52,49 @@ ks_start	move	#0,a
 		move	y1,a1
 		jsr	sig24div
 		DIVFIX
-		move	x1,y:ks_b
+		move	x1,y:ks_b			; guardo valor de b en ks_b
 		
 ;filtro del ks
-		move	x:onset,x0
-		move	x0,b
-		tst	b
-		ble	ks_main	
-		move	#0,x0
-		move	x0,x:onset
-		move	#3,x1
+		brclr	#STARTKS,x:(r6),ks_main
+		bclr	#STARTKS,x:(r6)
+		move	#$030000,x1
 		move	x1,y:ks_cnt	; Si es Nueva nota refresco x(n) con la delta. vel > 0 indica nueva nota.
 		
-ks_main		move	#0,a
-		move	y:ks_cnt,x1
-		move	x1,b
+ks_main		move	#0,a	#0,b
+		move	y:ks_cnt,b1
 		tst	b
 		beq	ks_continua		;cnt == 0 => ya paso la delta
-		move	x1,b
-		sub	#1,b
+		sub	#$00010000000000,b
 		tst	b
 		bne	ks_mayora1		
 		move	y:ks_b,y0
 		jmp	ks_mul
 		
-ks_mayora1	sub	#1,b
+ks_mayora1	sub	#$00010000000000,b
 		tst	b
 		bne	ks_mayora2
-		move	y:ks_b,b
-		add	#1,b
-		move	b,y0			
+		move	#0,b
+		move	y:ks_b,b1
+		add	#$00010000000000,b
+		move	b1,y0			
 		jmp	ks_mul
 		
-ks_mayora2	move	#1,y0		
+ks_mayora2	move	#$010000,y0		
 
-ks_mul		mpy	x0,y0,a			; vel * algo
-		move	y:ks_cnt,b		; decremento ks_cnt
-		sub	#1,b
-		move	b,y:ks_cnt		
+ks_mul		move	y:vel,x1
+		DIVFIX
+		mpy	x1,y0,a			; vel * algo
+		move	#0,b
+		move	y:ks_cnt,b1		; decremento ks_cnt
+		sub	#$00010000000000,b
+		move	b1,y:ks_cnt		
 		
-ks_continua	move	#R,y0
-		move	y:ks_b,y1
-		mpy	y1,y0,b			; b = R*b
-			
-		move	y:ks_l,n7			
+ks_continua	move	#R,x0
+		move	y:ks_b,x1
+		mpy	x1,x0,b			; b = R*b
+		MULFIXB
+		;;;;;;;;;;;;;;;;;ESTAMOS ACAAAAAAAAA;;;;;;;;;;;;;;;;;;
+		move	y:ks_l,n7
 		move	y:(r7+n7),x1
 		move	b,x0			; x0 = R*b
 		mpy	x1,x0,b			; b = R*b*y(n-L)
