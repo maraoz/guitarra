@@ -10,7 +10,7 @@ IP_B2	equ		$020000	;2
 ;=== memoria ===
 r1 ;recivo la dirección de inicio
 r2,n2 ;uso este AGU	
-x:WINDOW_SIZE 	;tamaño
+x:WINDOW_SIZE 	;tamaño de la ventana
 x:LOOP_SIZE		;tamaño dividido 2
 x:ACF		;resultados de tamaño 512
 x:RESULT	;para guardar el mínimo del yin
@@ -20,25 +20,26 @@ x:RESULT	;para guardar el mínimo del yin
 		;    d(n)=sum((x(1:N-n+1)-x(n:N)).^2);
 		;end
 yin_start		clr		n2
-		move 	x:WINDOW_SIZE,b
-		asl		b
-		move 	b,x:LOOP_SIZE
+		move 	x:WINDOW_SIZE,b0
+		asl		b0
+		move 	b0,x:LOOP_SIZE
 ;;LOOP
 		do 		x:LOOP_SIZE,bigloop
 		
-		clr		a		r1,r2	r1,y0					;;??
+		clr		a		
+		move	r1,r2
 		inc		n2		
-		move	x:WINDOW_SIZE,b
-		sub		n2,b
+		move	x:WINDOW_SIZE,b0
+		sub		n2,b0
 ;;LOOP
-		do		b,littleloop							
+		do		b0,littleloop							
 		move 				x:(r2+n2),x0	x:(r2)+,y0  ;Chequiar si se pueden referir los dos al mismo r2
 		sub 	x0,y0	 	x0,y0						;Resto y copio el resultado
 		mac 	x0,y0,a									;Al cuadrado y sumo	
 littleloop
 	
 		move	#ACF,r2
-		move 	a,x:(r2+n2)								
+		move 	a0,x:(r2+n2)								
 bigloop
 
 		;for n=1:N/2;
@@ -51,17 +52,17 @@ bigloop
 		move	#1,y0
 ;;LOOP
 		do		x:LOOP_SIZE,loopagain
-		add		x:(r2+n2),a					;en a se va acumulando
+		add		x:(r2+n2),a0					;en a se va acumulando
 		move	x:(r2+n2),x0
 		mpy		n2,x0,b
 		div		a,b							;en b me queda el resultado
-		move	b,x:(r2+n2)
+		move	b0,x:(r2+n2)
 		;[dpm,T]=min(dp)	
-		cmp		y0,b
+		cmp		y0,b0
 		bge		greater
 		
 		move	n2,x:RESULT					;guardo el mínimo
-		move	b,y0
+		move	b0,y0
 	
 greater	inc		n2
 loopagain
@@ -80,7 +81,7 @@ loopagain
 		clr		a
 		cmp 	#MIN_CMP,y0				;??
 		blt		fin
-		move	n2,a
+		move	n2,a0
 		cmp		#1,n2
 		beq		final
 		cmp		x:LOOP_SIZE,n2
