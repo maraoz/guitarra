@@ -49,22 +49,24 @@ bigloop
 		clr		a		
 		move	#ACF,r2
 		clr		n2
-		move	#1,y0
+		move	#1,b
 ;;LOOP
 		do		x:LOOP_SIZE,loopagain
-		add		x:(r2+n2),a0					;en a se va acumulando
-		move	x:(r2+n2),x0
-		mpy		n2,x0,b
-		div		a,b							;en b me queda el resultado
-		move	b0,x:(r2+n2)
+		add		x:(r2+n2),x0					;en x0 se va acumulando
+		move		x:(r2+n2),y0
+		mpy		y0,y1,a
+		MULFIX
+		jsr	sig24div						;en x1 me queda el resultado
+		DIVFIX					
+		move	x1,x:(r2+n2)
 		;[dpm,T]=min(dp)	
-		cmp		y0,b0
+		cmp		b,x1
 		bge		greater						;chequiar si puede haber saltos dentro de un loop
 		
 		move	n2,x:RESULT					;guardo el mínimo
-		move	b0,y0
+		move	x1,b
 	
-greater	inc		n2
+greater		inc		n2
 loopagain
 
 		;if dp(T)<0.1
@@ -99,7 +101,8 @@ loopagain
 		mpy		#IP_B2,x:(r2+n2),b
 		div		b,a
 		add		n2,a
-		sub		#2,a	
+		sub		#2,a							;DEJALO EN MUESTRAS
+											;LA MITAD DE MUESTRAS, GIL
 final	div		#FS,a
 		div		#1,a							;Resultado en a
 
