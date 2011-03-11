@@ -1,5 +1,5 @@
 ;=== constantes ===
-MIN_CMP		equ	$00A000	;0.1	????
+MIN_CMP		equ	$0018C6	;0.1	????
 IP_A0	equ		$030000	;3
 IP_A1	equ		$FC0000	;-4
 IP_A2	equ		$010000	;1
@@ -27,7 +27,7 @@ yin_start		clr		n2
 		do 		x:LOOP_SIZE,bigloop
 		
 		clr		a		
-		move	r1,r2
+		move	r1,r2									;Dir de inicio, me muevo con r2
 		inc		n2		
 		move	x:WINDOW_SIZE,b0
 		sub		n2,b0
@@ -59,7 +59,7 @@ bigloop
 		move	b0,x:(r2+n2)
 		;[dpm,T]=min(dp)	
 		cmp		y0,b0
-		bge		greater
+		bge		greater						;chequiar si puede haber saltos dentro de un loop
 		
 		move	n2,x:RESULT					;guardo el mínimo
 		move	b0,y0
@@ -92,7 +92,7 @@ loopagain
 		mpy		#IP_A0,x:(r2+n2),a
 		mpy		#IP_B0,x:(r2+n2),b
 		inc		n2
-		mpy		#IP_A1,x:(r2+n2),a		;;??
+		mpy		#IP_A1,x:(r2+n2),a		;;?? números negativos
 		mpy		#IP_B1,x:(r2+n2),b		;;??
 		inc		n2
 		mpy		#IP_A2,x:(r2+n2),a
