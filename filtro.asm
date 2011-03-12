@@ -6,6 +6,7 @@
 	include 'vectors.asm' 
 	;include 'sin.asm' 
 	include 'sig24div.asm'
+	include 'countsamples.asm'
 	list
 ;******************************************************************************
 
@@ -93,7 +94,7 @@ inifil		move    #inbuf,r0      ;point to input buffer
 		move	#0.999,y0
 		move	y0,y:lastmin
 		move	#0,x0
-		move	x0,x(r6)
+		move	x0,x:(r6)
 		move	x0,y:ignore
 		move	x0,y:env1
 		move	x0,y:env2
