@@ -13,10 +13,10 @@ ssi_rx_isr
         	jset    #Left_ch,y0,esright 
         
 ;ONSET DETECTION
-		clr 	a
-		move	n1,a0
-		inc	a
-		move	a0,n1
+		;clr 	a
+		;move	n1,a0
+		;inc	a
+		;move	a0,n1
 		
 		move 	x0,a	
 
@@ -69,7 +69,7 @@ yesonset	bset 	#1,y:innote
 		move 	a,y:ignore
 							;flags para main
 		move	r0,r1
-		move	#0,n1
+		;move	#0,n1
 		bset	#ONSETF,x:(r6)
 		move	y:env1,y0
 		move	y0,y:vel	
