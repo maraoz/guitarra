@@ -21,7 +21,7 @@ test32l		brset	#ONSETF,x:(r6),resetpd
 		tst	a
 		beq	test64
 		;bset	#STARTKS,x:(r6)
-		move	a,y:t
+		move	a1,y:t
 		brset	#NEWNOTE,x:(r6),kickks
 		bra	continuepd
 		
@@ -34,7 +34,7 @@ test64l		brset	#ONSETF,x:(r6),resetpd
 		jsr	yin
 		tst	a
 		beq	test128
-		move	a,y:t
+		move	a1,y:t
 		brset	#NEWNOTE,x:(r6),kickks
 		bra	continuepd
 		
@@ -47,7 +47,7 @@ test128l	brset	#ONSETF,x:(r6),resetpd
 		jsr	yin
 		tst	a
 		beq	test256
-		move	a,y:t
+		move	a1,y:t
 		brset	#NEWNOTE,x:(r6),kickks
 		bra	continuepd
 
@@ -60,7 +60,7 @@ test256l	brset	#ONSETF,x:(r6),resetpd
 		jsr	yin
 		tst	a
 		beq	test512
-		move	a,y:t
+		move	a1,y:t
 		brset	#NEWNOTE,x:(r6),kickks
 		bra	continuepd
 
@@ -73,7 +73,7 @@ test512l	brset	#ONSETF,x:(r6),resetpd
 		jsr	yin
 		tst	a
 		beq	endnotepd
-		move	a,y:t
+		move	a1,y:t
 		brset	#NEWNOTE,x:(r6),kickks
 		bra	continuepd
 		
@@ -92,5 +92,6 @@ continuepd	move	r2,a
 		bra	test32
 
 ;debug
-yin		move	#1,a
+yin		;move	#1,a		
+		move	#$200000,a1
 		rts	

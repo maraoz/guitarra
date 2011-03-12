@@ -3,10 +3,11 @@
 	include 'ioequ.asm'
 	include 'intequ.asm'
 	include 'ada_equ.asm'
-	include 'vectors.asm' 
-	;include 'sin.asm' 
+	include 'vectors.asm'  
 	include 'sig24div.asm'
 	include 'countsamples.asm'
+	include	'mightymacroes.asm'
+	include 'sin.asm'
 	list
 ;******************************************************************************
 
@@ -71,7 +72,7 @@ main
 		move	#KS_BUFSIZE-1,m7
 		move	#0,y0
 		move	y0,y:vel
-		move	#0.005,y0
+		move	#$200000,y0
 		move	y0,y:t			
 
 ;==================

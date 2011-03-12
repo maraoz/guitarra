@@ -7,10 +7,10 @@ T3			equ	$000193
 KS_K			equ	$004000	; 0.25
 
 ;=== isr ===
-	include	'mightymacroes.asm'
+		;move	#$00F000,x0
+		;move	x0,y:vel
 ;calculo los parametros L y b del KS
-ks_start	move	#0,a
-		move	#$010000,a1	
+ks_start	move	#$010000,a	
 		move	y:t,x0 		;asumo que t esta en y:t, lo guardo en y0 = t
 		jsr	sig24div
 		DIVFIX
@@ -18,12 +18,11 @@ ks_start	move	#0,a
 		
 		; L = floor (1/f - 0.25)
 		move 	y:t,x0
-		move	#0,a
-		move	#KS_K,a1
+		move	#KS_K,a
 		sub	x0,a				;a = 1/f - 0.25	
 		
 		and	#$FF0000,a							
-		move	a1,y:ks_l			; saco floor y guardo en ks_l
+		move	a,y:ks_l			; saco floor y guardo en ks_l
 		
 		; b  = sin( f * (1.5+L) - 1 ) / sin( f * (0.5-L) + 1 )
 		move	#0,a
@@ -67,7 +66,7 @@ ks_start	move	#0,a
 		brclr	#STARTKS,x:(r6),ks_main
 		bclr	#STARTKS,x:(r6)
 		move	#$030000,x1
-		move	x1,y:ks_cnt	; Si es Nueva nota refresco x(n) con la delta. vel > 0 indica nueva nota.
+		move	x1,y:ks_cnt	; Si es Nueva nota refresco x(n) con la delta. 
 		
 ks_main		move	#0,a	
 		move	#0,b
@@ -150,3 +149,7 @@ ks_continua	move	y:ks_l,y0
 		MULFIX
 		
 		move	x0,y:(r7)-
+		
+		move	#0,a
+		move	x0,a1
+		MULFIX
