@@ -89,45 +89,45 @@ ks_mul		move	y:vel,x1
 		sub	#$00010000000000,b
 		move	b1,y:ks_cnt		
 		
-ks_continua	move	#R,x0
+ks_continua	move	y:ks_l,y0
+		move	#$000100,y1
+		mpy	y0,y1,b
+		move	b1,n7
+		
+		move	#R,x0
 		move	y:ks_b,x1
 		mpy	x1,x0,b			; b = R*b
 		MULFIXB
 		;;;;;;;;;;;;;;;;;ESTAMOS ACAAAAAAAAA;;;;;;;;;;;;;;;;;;
-		move	y:ks_l,n7
-		move	y:(r7+n7),x1
-		move	b,x0			; x0 = R*b
-		mpy	x1,x0,b			; b = R*b*y(n-L)
-		add	b,a				; a = termino1
-			
-		move	x0,b
-		add	y0,b			; b = R * (b+1) 
-		move	b,x0
-		move	y:ks_l,b
-		add	#1,b
-		move	b,n7			
-		move	y:(r7+n7),x1
-		mpy	x0,x1,b			; b = R * (b+a) * y(n-L-1)
-		add	b,a				; a = termino1 + termino 2
 
-		move	y:ks_l,b
-		add	#2,b
-		move	b,n7			
-		move	y:(r7+n7),x1
-		mpy	y0,x1,b			; b = R*y(n-L-2)
-		add	b,a				; a = termino1 + termino2 + termino3
+		move	y:(r7+n7),y1	b,y0	; y0 = R*b
+		mac	y1,y0,a			; A = R*b*y(n-L); A = termino1
 		
-		move	#1,n7			
-		move	y:(r7+n7),x1
-		mpy	x1,y1,b			; b = R * y(n-1)
-		move	b,x0
-		move	#2,x1
-		mpy	x0,x1,b			; b = 2 * b * y(n-1)
-		sub	b,a				; a = termino1 + termino2 + termino3 - termino 4
+		move	x0,b
+		add	y0,b			; B = R * (b+1) 
+		move	n7,y1
+		add	#$000001,y1
+		move	y1,n7		
+		move	y:(r7+n7),y1	b1,y0
+		mac	y0,y1,a			; A = R * (b+1) * y(n-L-1); A = termino1 + termino 2
+
+		move	n7,y1
+		add	#$000001,y1
+		move	y1,n7		
+		move	y:(r7+n7),y1
+		mac	x0,y1,a			; A = R*y(n-L-2); A = termino1 + termino2 + termino3
 		
-		move	#0.5,x0
-		move	a,x1
+		move	#$000001,n7			
+		move	y:(r7+n7),y1
+		mpy	x1,y1,b			; b = b * y(n-1)
+		MULFIXB
+		move	#$020000,x1
+		mac	-y0,x1,a		; b = 2 * b * y(n-1); a = termino1 + termino2 + termino3 - termino 4
+		MULFIX
+		
+		move	#$008000,x1
 		mpy	x0,x1,a			;  a = (termino1 + termino2 + termino3 - termino4 ) * 0.5
+		MULFIX
 		
-		move	a,y:(r7)-
+		move	x0,y:(r7)-
 	
