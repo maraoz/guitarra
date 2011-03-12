@@ -6,15 +6,16 @@ STOPKS		equ	4
 
 pitchdetector	equ	*
 		brclr	#ONSETF,x:(r6),*	;espero a un onset
-		bset	#NEWNOTE,x:(r6)
-		
-onseton		bclr	#ONSETF,x:(r6)
+
+onseton		bset	#NEWNOTE,x:(r6)		
+		bclr	#ONSETF,x:(r6)
 		move	r1,r2
 		
 test32		move	#>32,x1
 test32l		brset	#ONSETF,x:(r6),resetpd
 		brset	#NENDF,x:(r6),endnotepd
-		brclr	#4,n1,test32l
+		countsamples	32
+		blt	test32l
 		move	x1,x:WINDOW_SIZE
 		jsr	yin
 		tst	a
@@ -26,7 +27,8 @@ test32l		brset	#ONSETF,x:(r6),resetpd
 test64		move	#>64,x1
 test64l		brset	#ONSETF,x:(r6),resetpd
 		brset	#NENDF,x:(r6),endnotepd
-		brclr	#5,n1,test64l
+		countsamples	64
+		blt	test64l
 		move	x1,x:WINDOW_SIZE
 		jsr	yin
 		tst	a
@@ -38,7 +40,8 @@ test64l		brset	#ONSETF,x:(r6),resetpd
 test128		move	#>128,x1
 test128l	brset	#ONSETF,x:(r6),resetpd
 		brset	#NENDF,x:(r6),endnotepd
-		brclr	#6,n1,test128l
+		countsamples	128
+		blt	test128l
 		move	x1,x:WINDOW_SIZE
 		jsr	yin
 		tst	a
@@ -50,7 +53,8 @@ test128l	brset	#ONSETF,x:(r6),resetpd
 test256		move	#>256,x1
 test256l	brset	#ONSETF,x:(r6),resetpd
 		brset	#NENDF,x:(r6),endnotepd
-		brclr	#7,n1,test256l
+		countsamples	256
+		blt	test256l
 		move	x1,x:WINDOW_SIZE
 		jsr	yin
 		tst	a
@@ -62,7 +66,8 @@ test256l	brset	#ONSETF,x:(r6),resetpd
 test512		move	#>512,x1
 test512l	brset	#ONSETF,x:(r6),resetpd
 		brset	#NENDF,x:(r6),endnotepd
-		brclr	#8,n1,test512l
+		countsamples	512
+		blt	test512l
 		move	x1,x:WINDOW_SIZE
 		jsr	yin
 		tst	a

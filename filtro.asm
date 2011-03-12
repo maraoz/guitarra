@@ -87,11 +87,13 @@ inifil		move    #inbuf,r0      ;point to input buffer
 	;	move    #outbuf,r4      	;point to output buffer
 	;	move    #BUFSIZE-1,m4     	;mod(BUFSIZE)
 
-		move	#flags,r6		
+		move	#flags,r6
+				
 			
 		move	#0.999,y0
 		move	y0,y:lastmin
 		move	#0,x0
+		move	x0,x(r6)
 		move	x0,y:ignore
 		move	x0,y:env1
 		move	x0,y:env2
