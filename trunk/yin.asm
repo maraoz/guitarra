@@ -3,9 +3,9 @@ MIN_CMP		equ	$0018C6	;0.1	????
 IP_A0	equ		$030000	;3
 IP_A1	equ		$FC0000	;-4
 IP_A2	equ		$010000	;1
-IP_B0	equ		$020000	;2
-IP_B1	equ		$FC0000	;-4
-IP_B2	equ		$020000	;2
+IP_B0	equ		$040000	;2
+IP_B1	equ		$F80000	;-4
+IP_B2	equ		$040000	;2
 
 ;=== memoria ===
 r1 ;recivo la dirección de inicio
@@ -19,52 +19,56 @@ x:RESULT	;para guardar el mínimo del yin
 		;for n=1:N/2
 		;    d(n)=sum((x(1:N-n+1)-x(n:N)).^2);
 		;end
-yin_start		clr		n2
-		move 	x:WINDOW_SIZE,b0
-		asl		b0
-		move 	b0,x:LOOP_SIZE
+yin_start		clr		n1		x:WINDOW_SIZE,b
+		asl		b		
+		move	b,x:LOOP_SIZE
 ;;LOOP
 		do 		x:LOOP_SIZE,bigloop
 		
 		clr		a		
 		move	r1,r2									;Dir de inicio, me muevo con r2
 		inc		n2		
-		move	x:WINDOW_SIZE,b0
-		sub		n2,b0
+		move 	n2,x1	x:WINDOW_SIZE,x0
+		sub		x1,x0
 ;;LOOP
-		do		b0,littleloop							
-		move 				x:(r2+n2),x0	x:(r2)+,y0  ;Chequiar si se pueden referir los dos al mismo r2
-		sub 	x0,y0	 	x0,y0						;Resto y copio el resultado
-		mac 	x0,y0,a									;Al cuadrado y sumo	
+		do		x0,littleloop							
+		move 				x:(r2+n2),x0	
+		move				x:(r2)+,x1
+		sub 	x1,x0	 	
+		move	x0,x1									;Resto y copio el resultado
+		mac 	x0,x1,a									;Al cuadrado y sumo	
 littleloop
-	
-		move	#ACF,r2
-		move 	a0,x:(r2+n2)								
+		MULFIX
+		move	#ACF,r2		
+		move	x0,x:(r2+n2)						
 bigloop
 
 		;for n=1:N/2;
 		;    dps=dps+d(n);
 		;    dp(n)=n*d(n)/dps;
 		;end
-		clr		a		
-		move	#ACF,r2
+		clr		a
+		clr 	b
 		clr		n2
-		move	#1,b
+		move	#1,y0
 ;;LOOP
 		do		x:LOOP_SIZE,loopagain
-		add		x:(r2+n2),x0					;en x0 se va acumulando
-		move		x:(r2+n2),y0
-		mpy		y0,y1,a
+		move	x:(r2+n2),x0
+		add		x0,b					;en b se va acumulando
+		move	n2,x1
+		mpy		x0,x1,a
 		MULFIX
+		move	x0,a
+		move	b,x0
 		jsr	sig24div						;en x1 me queda el resultado
 		DIVFIX					
 		move	x1,x:(r2+n2)
 		;[dpm,T]=min(dp)	
-		cmp		b,x1
+		cmp		y0,x1
 		bge		greater						;chequiar si puede haber saltos dentro de un loop
 		
-		move	n2,x:RESULT					;guardo el mínimo
-		move	x1,b
+		move	n2,x:RESULT					;guardo el índice del mínimo
+		move	x1,y0
 	
 greater		inc		n2
 loopagain
@@ -80,31 +84,52 @@ loopagain
 		;else
 		;    f=0;
 		;end
-		clr		a
-		cmp 	#MIN_CMP,y0				;??
-		blt		fin
-		move	n2,a0
-		cmp		#1,n2
+		clr		x0
+		move	#MIN_CMP,y1
+		cmp 	y1,y0				;??
+		bge		fin
+		move	x:RESULT,x0
+		cmp		#1,x0
 		beq		final
-		cmp		x:LOOP_SIZE,n2
+		move	x:LOOP_SIZE,x1
+		cmp		x1,x0
 		beq		final
+		
 		clr		a
 		clr		b
-		dec		n2
-		mpy		#IP_A0,x:(r2+n2),a
-		mpy		#IP_B0,x:(r2+n2),b
-		inc		n2
-		mpy		#IP_A1,x:(r2+n2),a		;;?? números negativos
-		mpy		#IP_B1,x:(r2+n2),b		;;??
-		inc		n2
-		mpy		#IP_A2,x:(r2+n2),a
-		mpy		#IP_B2,x:(r2+n2),b
-		div		b,a
-		add		n2,a
-		sub		#2,a							;DEJALO EN MUESTRAS
+		sub		#1,x0
+		move	x0,n2
+		move	x:(r2+n2),x1
+		move	#IP_A0,y0
+		move	#IP_B0,y1
+		mac		y0,x1,b
+		mac		y1,x1,a
+		add		#1,x0
+		move	x0,n2
+		move	#IP_A1,y0
+		move	#IP_B1,y1
+		mac		y0,x1,b
+		mac		y1,x1,a		;;??
+		add		#1,x0
+		move	x0,n2
+		move	#IP_A2,y0
+		move	#IP_B2,y1
+		mac		y0,x1,b
+		mac		y1,x1,a	
+		
+		MULFIX
+		MULFIXB
+		move	y0,a
+		jsr	sig24div						;en x1 me queda el resultado
+		DIVFIX
+		move	n2,x0
+		sub		#2,x0
+		addr	x1,x0
+		;CORREGIR EL RESULTADO
+								;CHEQUIÄ
+								;DEJALO EN MUESTRAS
 											;LA MITAD DE MUESTRAS, GIL
-final	div		#FS,a
-		div		#1,a							;Resultado en a
+											;Resultado en a
 
 fin		rts		
 	
