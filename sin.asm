@@ -23,4 +23,5 @@ sin
 			MULFIX
 
 			movec	ssh,y1
+			nop
 			rts 

@@ -95,11 +95,11 @@ noend		;move 	#0,a 			;DEBUG
 ;FIN DE ONSET DETECTION
 	
 finiupi	
-		;include 'ks.asm'
+		include 'ks.asm'
 		;debug
-		brclr	#STARTKS,x:(r6),nonote
-		bclr	#STARTKS,x:(r6)
-		move	#0.9999,x0
+		;brclr	#STARTKS,x:(r6),nonote
+		;bclr	#STARTKS,x:(r6)
+		;move	#0.9999,x0
 		jmp	endisr
 		
 nonote		move	#0,a
