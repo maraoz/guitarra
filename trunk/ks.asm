@@ -7,13 +7,13 @@ T3			equ	$000193
 KS_K			equ	$004000	; 0.25
 
 ;=== isr ===
-		;move	#$00F000,x0
+		;move	#$F00000,x0
 		;move	x0,y:vel
 ;calculo los parametros L y b del KS
-ks_start	move	#$010000,a	
+ks_start	move	#$010000,a
+		DIVFIX	
 		move	y:t,x0 		;asumo que t esta en y:t, lo guardo en y0 = t
 		jsr	sig24div
-		DIVFIX
 		move	x1,y:f				;guardo la frecuencia a partir del t calculado. 
 		
 		; L = floor (1/f - 0.25)
@@ -25,41 +25,36 @@ ks_start	move	#$010000,a
 		move	a,y:ks_l			; saco floor y guardo en ks_l
 		
 		; b  = sin( f * (1.5+L) - 1 ) / sin( f * (0.5-L) + 1 )
-		move	#0,a
-		move	#$00C000,a1	
+		move	#$00C000,a	
 		move	y:ks_l,x0			; cargo 0.75
 		add	x0,a				; 0.75+L = A
 		move	y:f,x0		
 		move	a1,x1
 		mpy	x0,x1,a
 		MULFIX					; f*(0.75+L) = x0
-		move	#0,a
-		move	#$FF0000,a1			;cargo -1
+		move	#$FF0000,a			;cargo -1
 		add	x0,a				; f * (0.75+L) - 1 = A
 		nop
-		move	a1,x0
+		move	a,x0
 		jsr	sin
 		move	x0,y1				; Queda guardado en Y1, el valor de sin(blabla)
 
-		move	#0,a
-		move	#$004000,a1	
+		move	#$004000,a	
 		move	y:ks_l,x0	; cargo 0.25
 		sub	x0,a				; 0.25-L = A
 		move	y:f,x0		
 		move	a1,x1
 		mpy	x0,x1,a
 		MULFIX					; f*(0.25-L) = x0
-		move	#0,a
-		move	#$010000,a1			;cargo +1
+		move	#$010000,a			;cargo +1
 		add	x0,a				; f*(0.25-L) + 1 = A
 		nop
-		move	a1,x0
+		move	a,x0
 		jsr	sin				; Queda guardado en X0, el valor de sin(blabla)	
 		
-		move	#0,a
-		move	y1,a1
+		move	y1,a
+		DIVFIXB
 		jsr	sig24div
-		DIVFIX
 		move	x1,y:ks_b			; guardo valor de b en ks_b
 		
 ;filtro del ks
@@ -68,43 +63,38 @@ ks_start	move	#$010000,a
 		move	#$030000,x1
 		move	x1,y:ks_cnt	; Si es Nueva nota refresco x(n) con la delta. 
 		
-ks_main		move	#0,a	
-		move	#0,b
-		move	y:ks_cnt,b1
+ks_main		clr	a	y:ks_cnt,b
 		tst	b
 		beq	ks_continua		;cnt == 0 => ya paso la delta
-		sub	#$00010000000000,b
-		tst	b
+		sub	#$010000,b
 		bne	ks_mayora1		
 		move	y:ks_b,y0
 		jmp	ks_mul
 		
-ks_mayora1	sub	#$00010000000000,b
-		tst	b
+ks_mayora1	sub	#$010000,b
 		bne	ks_mayora2
-		move	#0,b
-		move	y:ks_b,b1
-		add	#$00010000000000,b
-		nop
-		move	b1,y0			
+		move	y:ks_b,b
+		add	#$010000,b
+		move	b,y0			
 		jmp	ks_mul
 		
 ks_mayora2	move	#$010000,y0		
 
 ks_mul		move	y:vel,x1
-		DIVFIX
+
+		move	#$010000,x0
+		mpy	x0,x1,a
+		move	a,x1
+		
 		mpy	x1,y0,a			; vel * algo
-		move	#0,b
-		move	y:ks_cnt,b1		; decremento ks_cnt
-		sub	#$00010000000000,b
-		nop
-		move	b1,y:ks_cnt		
+		move	y:ks_cnt,b		; decremento ks_cnt
+		sub	#$010000,b
+		move	b,y:ks_cnt		
 		
 ks_continua	move	y:ks_l,y0
 		move	#$000100,y1
 		mpy	y0,y1,b
-		nop
-		move	b1,n7
+		move	b,n7
 		
 		move	#R,x0
 		move	y:ks_b,x1
@@ -114,12 +104,10 @@ ks_continua	move	y:ks_l,y0
 		move	y:(r7+n7),y1	
 		move	b,y0			; y0 = R*b
 		mac	y1,y0,a			; A = R*b*y(n-L); A = termino1
-		
-		move	#0,b
-		move	n7,b1
-		add	#$000001,b
-		nop
-		move	b1,n7
+
+		move	n7,b0
+		inc	b
+		move	b0,n7
 		
 		move	x0,b
 		add	y0,b			; B = R * (b+1) 
@@ -150,6 +138,5 @@ ks_continua	move	y:ks_l,y0
 		
 		move	x0,y:(r7)-
 		
-		move	#0,a
-		move	x0,a1
+		move	x0,a
 		MULFIX
