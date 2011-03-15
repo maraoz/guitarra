@@ -5,7 +5,7 @@ T1			equ	$00860A	;Taylor
 T2			equ	$00150E
 T3			equ	$000193
 KS_K			equ	$004000	; 0.25
-
+ 
 ;=== isr ===
 		;move	#$F00000,x0
 		;move	x0,y:vel
