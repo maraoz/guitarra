@@ -1,65 +1,73 @@
 
 ;=== constantes ===
 R			equ	$00FEB8
-T1			equ	$00860A	;Taylor
-T2			equ	$00150E
-T3			equ	$000193
+T1			equ	$03243F	;Taylor
+T3			equ	$052AEF
+T5			equ	$028CD8
+T7			equ	$009969
 KS_K			equ	$004000	; 0.25
  
 ;=== isr ===
-		;move	#$F00000,x0
-		;move	x0,y:vel
+		move	#$7FFFFF,x0
+		move	x0,y:vel
 ;calculo los parametros L y b del KS
 ks_start	move	#$010000,a
-		DIVFIX	
-		move	y:t,x0 		;asumo que t esta en y:t, lo guardo en y0 = t
-		jsr	sig24div
-		move	x1,y:f				;guardo la frecuencia a partir del t calculado. 
+		DIVFIX
+		move	x:t,x0 		;asumo que t esta en x:t, lo guardo en y0 = t	
+		DIV
 		
+		move	x1,x:f				;guardo la frecuencia a partir del t calculado. 
 		; L = floor (1/f - 0.25)
-		move 	y:t,x0
-		move	#KS_K,a
+		move 	x:t,a
+		move	#KS_K,x0
 		sub	x0,a				;a = 1/f - 0.25	
 		
 		and	#$FF0000,a							
-		move	a,y:ks_l			; saco floor y guardo en ks_l
+		move	a,x:ks_l			; saco floor y guardo en ks_l
 		
 		; b  = sin( f * (1.5+L) - 1 ) / sin( f * (0.5-L) + 1 )
 		move	#$00C000,a	
-		move	y:ks_l,x0			; cargo 0.75
+		move	x:ks_l,x0			; cargo 0.75
 		add	x0,a				; 0.75+L = A
-		move	y:f,x0		
-		move	a1,x1
+		move	x:f,x0		
+		move	a,x1		
 		mpy	x0,x1,a
-		MULFIX					; f*(0.75+L) = x0
+		MULFIX					; f*(0.75+L) = x0		
 		move	#$FF0000,a			;cargo -1
 		add	x0,a				; f * (0.75+L) - 1 = A
 		nop
-		move	a,x0
-		jsr	sin
+		move	a,x0	
+		
+		SIN
+		
 		move	x0,y1				; Queda guardado en Y1, el valor de sin(blabla)
 
 		move	#$004000,a	
-		move	y:ks_l,x0	; cargo 0.25
+		move	x:ks_l,x0	; cargo 0.25
 		sub	x0,a				; 0.25-L = A
-		move	y:f,x0		
-		move	a1,x1
+		move	x:f,x0		
+		move	a,x1
 		mpy	x0,x1,a
 		MULFIX					; f*(0.25-L) = x0
 		move	#$010000,a			;cargo +1
 		add	x0,a				; f*(0.25-L) + 1 = A
 		nop
 		move	a,x0
-		jsr	sin				; Queda guardado en X0, el valor de sin(blabla)	
+		SIN				; Queda guardado en X0, el valor de sin(blabla)	
 		
-		move	y1,a
+		move	y1,b
 		DIVFIXB
-		jsr	sig24div
-		move	x1,y:ks_b			; guardo valor de b en ks_b
+		move	b,a
+		DIV
+		move	x1,x:ks_b			; guardo valor de b en ks_b
 		
 ;filtro del ks
 		brclr	#STARTKS,x:(r6),ks_main
 		bclr	#STARTKS,x:(r6)
+				
+		;move	#0.9999,x0
+		;jmp	finks
+	
 		move	#$030000,x1
 		move	x1,y:ks_cnt	; Si es Nueva nota refresco x(n) con la delta. 
 		
@@ -68,12 +76,12 @@ ks_main		clr	a	y:ks_cnt,b
 		beq	ks_continua		;cnt == 0 => ya paso la delta
 		sub	#$010000,b
 		bne	ks_mayora1		
-		move	y:ks_b,y0
+		move	x:ks_b,y0
 		jmp	ks_mul
 		
 ks_mayora1	sub	#$010000,b
 		bne	ks_mayora2
-		move	y:ks_b,b
+		move	x:ks_b,b
 		add	#$010000,b
 		move	b,y0			
 		jmp	ks_mul
@@ -91,13 +99,15 @@ ks_mul		move	y:vel,x1
 		sub	#$010000,b
 		move	b,y:ks_cnt		
 		
-ks_continua	move	y:ks_l,y0
+ks_continua	;jmp	superlabel
+		
+		move	x:ks_l,y0
 		move	#$000100,y1
 		mpy	y0,y1,b
 		move	b,n7
 		
 		move	#R,x0
-		move	y:ks_b,x1
+		move	x:ks_b,x1
 		mpy	x1,x0,b			; b = R*b
 		MULFIXB
 
@@ -130,7 +140,7 @@ ks_continua	move	y:ks_l,y0
 		MULFIXB
 		move	#$020000,x1
 		mac	-y0,x1,a		; b = 2 * b * y(n-1); a = termino1 + termino2 + termino3 - termino 4
-		MULFIX
+superlabel	MULFIX
 		
 		move	#$008000,x1
 		mpy	x0,x1,a			;  a = (termino1 + termino2 + termino3 - termino4 ) * 0.5
@@ -140,3 +150,12 @@ ks_continua	move	y:ks_l,y0
 		
 		move	x0,a
 		MULFIX
+		
+		brclr	#STARTKS,x:(r6),nohaynota
+		bclr	#STARTKS,x:(r6)
+		move	#0.9999,x0
+		jmp 	finks
+nohaynota	move	#0,x0
+		jmp 	finks
+		
+finks		nop

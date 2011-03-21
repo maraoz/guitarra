@@ -10,7 +10,8 @@ ssi_rx_isr
 		
         	movep   x:M_RX0,x0 	       	; Read a/d data
         	move	x:bits,y0
-        	jset    #Left_ch,y0,esright 
+        	jset    #Left_ch,y0,esright
+        	 
         
 ;ONSET DETECTION
 		;clr 	a
