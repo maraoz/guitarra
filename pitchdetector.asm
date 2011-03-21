@@ -93,5 +93,5 @@ continuepd	move	r2,a
 
 ;debug
 yin		;move	#1,a		
-		move	#$200000,a1
+		move	#$700000,a1
 		rts	

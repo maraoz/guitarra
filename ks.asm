@@ -102,17 +102,15 @@ ks_mul		move	y:vel,x1
 ks_continua	;jmp	superlabel
 		
 		move	x:ks_l,y0
-		move	#$000100,y1
+		move	#>$000100,y1
 		mpy	y0,y1,b
 		move	b,n7
-		
 		move	#R,x0
 		move	x:ks_b,x1
 		mpy	x1,x0,b			; b = R*b
 		MULFIXB
 
-		move	y:(r7+n7),y1	
-		move	b,y0			; y0 = R*b
+		move	y:(r7+n7),y1
 		mac	y1,y0,a			; A = R*b*y(n-L); A = termino1
 
 		move	n7,b0
@@ -123,18 +121,16 @@ ks_continua	;jmp	superlabel
 		add	y0,b			; B = R * (b+1) 
 		nop
 		move	y:(r7+n7),y1	
-		move	b1,y0
+		move	b,y0
 		mac	y0,y1,a			; A = R * (b+1) * y(n-L-1); A = termino1 + termino 2
 
-		move	#0,b
-		move	n7,b1
-		add	#$000001,b
-		nop
-		move	b1,n7		
+		move	n7,b0
+		inc		b
+		move	b0,n7		
 		move	y:(r7+n7),y1
 		mac	x0,y1,a			; A = R*y(n-L-2); A = termino1 + termino2 + termino3
 		
-		move	#$000001,n7			
+		move	#>$000001,n7			
 		move	y:(r7+n7),y1
 		mpy	x1,y1,b			; b = b * y(n-1)
 		MULFIXB
@@ -151,11 +147,11 @@ superlabel	MULFIX
 		move	x0,a
 		MULFIX
 		
-		brclr	#STARTKS,x:(r6),nohaynota
-		bclr	#STARTKS,x:(r6)
-		move	#0.9999,x0
-		jmp 	finks
-nohaynota	move	#0,x0
-		jmp 	finks
+		;brclr	#STARTKS,x:(r6),nohaynota
+		;bclr	#STARTKS,x:(r6)
+		;move	#0.9999,x0
+		;jmp 	finks
+;nohaynota	move	#0,x0
+;		jmp 	finks
 		
-finks		nop
+;finks		nop

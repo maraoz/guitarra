@@ -41,6 +41,8 @@ ks_b		ds		1
 f		ds		1
 t		ds		1
 
+bicho	ds		1
+
 decay		dc		0.99975
 envt		dc		0.002
 denvt		dc		0.0006
@@ -77,7 +79,10 @@ main
 		move	#0,y0
 		move	y0,y:vel
 		move	#$200000,y0
-		move	y0,x:t			
+		move	y0,x:t
+		move	#0,x0
+		rep		#KS_BUFSIZE
+		move	x0,x:(r7)+
 
 ;==================
 
