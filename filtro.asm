@@ -35,6 +35,12 @@ endinbuf	equ		*
 bits		ds		1
 flags		ds		1
 WINDOW_SIZE	ds		1
+
+ks_l		ds		1
+ks_b		ds		1
+f		ds		1
+t		ds		1
+
 decay		dc		0.99975
 envt		dc		0.002
 denvt		dc		0.0006
@@ -44,12 +50,10 @@ mint		dc		0.003
 	org		y:0
 ; variables del KS
 ksbuf		dsm	KS_BUFSIZE
-f			ds	1
-t			ds	1
+
 vel			ds	1
-ks_l		ds	1
-ks_b		ds	1
-ks_cnt		ds	1
+
+ks_cnt		ds		1
 
 env1		ds		1
 env2		ds		1
@@ -73,7 +77,7 @@ main
 		move	#0,y0
 		move	y0,y:vel
 		move	#$200000,y0
-		move	y0,y:t			
+		move	y0,x:t			
 
 ;==================
 

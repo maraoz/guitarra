@@ -13,7 +13,7 @@ MULFIX		macro			;pisa x0,x1,a . resultado en a y x0
 _positivo	move	#>64,x0	
 		move	a,x1
 		mpy	x0,x1,a
-_fin		move	a,x0
+_fin		move	a0,x0
 		endm
 	
 		
@@ -31,7 +31,7 @@ MULFIXB		macro			;pisa x0,x1,b
 _positivo	move	#>64,y0	
 		move	b,y1
 		mpy	y0,y1,b
-_fin		move	b,y0
+_fin		move	b0,y0
 		endm
 	
 	

@@ -18,18 +18,20 @@
 ;		The remainder will be in b1
 ;**************************************************************************
 
-sig24div	abs	a	a,b	;make dividend positive, copy a1 to b1
+DIV		macro
+_sig24div	abs	a	a,b	;make dividend positive, copy a1 to b1
 		eor	x0,b	b,y0	;save rem. sign in x1, quo sign in N
 		and	#$FE,ccr 	;clear carry bit C (quotient sign bit)
 		rep	#$18		;form a 24-bit quotient
 		div	x0,a		;form quotient in a0, remainder in a1
 		tfr	a,b		;save remainder and quotient in b
-		jpl	saveq		;of quotient is positive, go to saveq
+		jpl	_saveq		;of quotient is positive, go to saveq
 		neg	b		;complement quotient if N bit is set
-saveq		tfr	x0,b	b0,x1	;save quo. in x1, get signed divisor
+_saveq		tfr	x0,b	b0,x1	;save quo. in x1, get signed divisor
 		abs	b		;get absolute value of signed divisor
 		add	a,b		;restore remainder in b1
-		jclr	#23,y0,done	;go to done if remainder is positive
+		jclr	#23,y0,_done	;go to done if remainder is positive
 		move	#$0,b0		;prevent unwanted carry
 		neg	b		;complement remainder
-done		rts
+_done		nop	;rts
+		endm
