@@ -64,22 +64,19 @@ ks_start	move	#$010000,a
 ;filtro del ks
 		brclr	#STARTKS,x:(r6),ks_main
 		bclr	#STARTKS,x:(r6)
-				
-		;move	#0.9999,x0
-		;jmp	finks
-	
-		move	#$030000,x1
+
+		move	#>$3,x1
 		move	x1,y:ks_cnt	; Si es Nueva nota refresco x(n) con la delta. 
 		
-ks_main		clr	a	y:ks_cnt,b
+ks_main	clr	a	y:ks_cnt,b
 		tst	b
 		beq	ks_continua		;cnt == 0 => ya paso la delta
-		sub	#$010000,b
+		cmp	#>$1,b
 		bne	ks_mayora1		
 		move	x:ks_b,y0
 		jmp	ks_mul
 		
-ks_mayora1	sub	#$010000,b
+ks_mayora1	cmp	#>$2,b
 		bne	ks_mayora2
 		move	x:ks_b,b
 		add	#$010000,b
@@ -88,22 +85,22 @@ ks_mayora1	sub	#$010000,b
 		
 ks_mayora2	move	#$010000,y0		
 
-ks_mul		move	y:vel,x1
+ks_mul	move	y:vel,a
 
-		move	#$010000,x0
-		mpy	x0,x1,a
-		move	a,x1
+		DIVFIX
+		move	a,x0
 		
-		mpy	x1,y0,a			; vel * algo
+		mpy	x0,y0,a			; vel * algo
+		
 		move	y:ks_cnt,b		; decremento ks_cnt
-		sub	#$010000,b
+		sub	#>$1,b
 		move	b,y:ks_cnt		
 		
-ks_continua	;jmp	superlabel
+ks_continua	move	x:ks_l,b
+
+		DIVFIXB
+		DIVFIXB
 		
-		move	x:ks_l,y0
-		move	#>$000100,y1
-		mpy	y0,y1,b
 		move	b,n7
 		move	#R,x0
 		move	x:ks_b,x1
@@ -136,7 +133,7 @@ ks_continua	;jmp	superlabel
 		MULFIXB
 		move	#$020000,x1
 		mac	-y0,x1,a		; b = 2 * b * y(n-1); a = termino1 + termino2 + termino3 - termino 4
-superlabel	MULFIX
+		MULFIX
 		
 		move	#$008000,x1
 		mpy	x0,x1,a			;  a = (termino1 + termino2 + termino3 - termino4 ) * 0.5
@@ -146,12 +143,3 @@ superlabel	MULFIX
 		
 		move	x0,a
 		MULFIX
-		
-		;brclr	#STARTKS,x:(r6),nohaynota
-		;bclr	#STARTKS,x:(r6)
-		;move	#0.9999,x0
-		;jmp 	finks
-;nohaynota	move	#0,x0
-;		jmp 	finks
-		
-;finks		nop
