@@ -92,6 +92,7 @@ continuepd	move	r2,a
 		bra	test32
 
 ;debug
-yin		;move	#1,a		
-		move	#$700000,a1
-		rts	
+;yin		;move	#1,a		
+;		move	#$300000,a1
+;		rts
+	include 'yin.asm'

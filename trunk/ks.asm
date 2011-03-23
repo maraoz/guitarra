@@ -64,7 +64,7 @@ ks_start	move	#$010000,a
 ;filtro del ks
 		brclr	#STARTKS,x:(r6),ks_main
 		bclr	#STARTKS,x:(r6)
-
+		
 		move	#>$3,x1
 		move	x1,y:ks_cnt	; Si es Nueva nota refresco x(n) con la delta. 
 		
