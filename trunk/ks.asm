@@ -96,10 +96,10 @@ ks_mul	move	y:vel,a
 		sub	#>$1,b
 		move	b,y:ks_cnt		
 		
-ks_continua	move	x:ks_l,b
+ks_continua	move	x:ks_l,y1
 
-		DIVFIXB
-		DIVFIXB
+		move	#$000100,y0
+		mpy	y0,y1,b
 		
 		move	b,n7
 		move	#R,x0
