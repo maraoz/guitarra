@@ -5,16 +5,15 @@ MULFIX		macro			;pisa x0,x1,a . resultado en a y x0
 		bge	_positivo			
 		neg	a		
 		
-		rep	#7
-		asl	a
+		asl	#7,a,a
 		
 		neg	a
 		bra	_fin
 		
-_positivo	rep	#7
-		asl	a
+_positivo	
+		asl	#7,a,a
 		
-_fin		move	a0,x0
+_fin		move	a,x0
 		endm
 	
 		
@@ -24,16 +23,15 @@ MULFIXB		macro			;pisa x0,x1,b
 		bge	_positivo			
 		neg	b		
 		
-		rep	#7
-		asl	b
+		asl	#7,b,b
 		
 		neg	b
 		bra	_fin
 			
-_positivo	rep	#7
-		asl	b
+_positivo
+		asl	#7,b,b
 		
-_fin		move	b0,y0
+_fin		move	b,y0
 		endm
 	
 	
