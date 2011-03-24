@@ -20,7 +20,8 @@ IP_B2	equ		$040000	;4
 		;for n=1:N/2
 		;    d(n)=sum((x(1:N-n+1)-x(n:N)).^2);
 		;end
-yin		move	#0,n3	
+yin		jmp fin
+		move	#0,n3	
 		move	x:WINDOW_SIZE,b0
 		asl	b		
 		move	b0,x:LOOP_SIZE
@@ -147,7 +148,8 @@ final	move	x:RESULT,y0
 											;LA MITAD DE MUESTRAS, GIL
 											;Resultado en a en MN
 
-fin		rts		
+fin		move	#$200000,a
+		rts		
 	
 	
 	
