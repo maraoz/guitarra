@@ -14,26 +14,35 @@ IP_B2	equ		$040000	;4
 ;x:WINDOW_SIZE 	;tamaño de la ventana  ;numero entero??
 ;x:LOOP_SIZE	;tamaño dividido 2
 ;x:ACF		;resultados de tamaño 512
+;x:SUMA,x:SUMA_CNT
 ;x:RESULT	;para guardar el mínimo del yin
 
 ;=== isr ===
 		;for n=1:N/2
 		;    d(n)=sum((x(1:N-n+1)-x(n:N)).^2);
 		;end
-yin		jmp fin
-		move	#0,n3	
+yin		;jmp fin ;debug
+		move	#0,n3
+		
+		clr	b	
+		move	b,x:SUMA	
+		
 		move	x:WINDOW_SIZE,b0
-		asl	b		
+		asr	b		
 		move	b0,x:LOOP_SIZE
-;;LOOP
+		
+		asr	b
+		move	b0,x:SUMA_CNT
+		asl	b
+;;bigloop
 		do 	b0,bigloop
 		
 		clr	a		
 		move	r2,r3
 		move	n3,x0	
-		move	x:WINDOW_SIZE,b			;Dir de inicio, me muevo con r3			
+		move	x:WINDOW_SIZE,b0		;Dir de inicio, me muevo con r3			
 		sub	x0,b
-;;LOOP
+;;littleloop
 		do	b0,littleloop							
 		move 	x:(r3+n3),b	
 		move	x:(r3)+,x1
@@ -44,9 +53,19 @@ yin		jmp fin
 littleloop
 		;MULFIX????? MN??
 		;rep	#8
-		asl		#8,a,a
+		asr	#8,a,a
 		move	#ACF,r3
 		move	a,x:(r3+n3)
+		
+		move	x:SUMA_CNT,b0
+		tst	b
+		beq	dontsum
+		dec	b
+		move	b0,x:SUMA_CNT
+		move	x:SUMA,x0
+		add	x0,a
+		move	a,x:SUMA
+dontsum		
 		move	n3,b0		
 		inc	b
 		move	b0,n3						
@@ -56,12 +75,15 @@ bigloop
 		;    dps=dps+d(n);
 		;    dp(n)=n*d(n)/dps;
 		;end
-		clr	a
-		clr 	b
-		move	#0,n3
+		
+		move	x:LOOP_SIZE,a0
+		asr	a
+		move	a0,n3
+		move	x:SUMA,b	
 		move	#$010000,y0
 ;;LOOP
 		move	x:LOOP_SIZE,a0
+		asr	a
 		do	a0,loopagain
 		move	x:(r3+n3),x0
 		add	x0,b					;en b se va acumulando
@@ -75,7 +97,7 @@ bigloop
 		move	x1,x:(r3+n3)	
 		move	y0,a
 										;[dpm,T]=min(dp)	
-		cmp		x1,a
+		cmp	x1,a
 		blt	lower						;chequiar si puede haber saltos dentro de un loop
 		
 		move	n3,x:RESULT					;guardo el índice del mínimo
@@ -83,7 +105,7 @@ bigloop
 	
 lower		move	n3,a0
 		inc	a
-		move	a,n3
+		move	a0,n3
 loopagain
 
 		;if dp(T)<0.1
@@ -102,53 +124,53 @@ loopagain
 		
 		move	#MIN_CMP,b
 		cmp 	y0,b				;??
-		blt		fin
+		blt	fin
 		move	x:RESULT,b
-		cmp		#$000001,b
-		beq		final
+		cmp	#$000001,b
+		beq	final
 		move	x:LOOP_SIZE,y1
-		cmp		y1,b
+		cmp	y1,b
 		beq	final						
 		
 		move	#ACF,x0
-		add		x0,b
-		dec		b
+		add	x0,b
+		dec	b
 		move	b,r3
-		clr		b
+		clr	b
 		move	x:(r3)+,x0
 		move	#IP_A0,y0
 		move	#IP_B0,y1
-		mac		y0,x0,b
-		mac		y1,x0,a
+		mac	y0,x0,b
+		mac	y1,x0,a
 		move	x:(r3)+,x0
 		move	#IP_A1,y0
 		move	#IP_B1,y1
-		mac		y0,x0,b
-		mac		y1,x0,a		;;??
+		mac	y0,x0,b
+		mac	y1,x0,a		;;??
 		move	x:(r3),x0
 		move	#IP_A2,y0
 		move	#IP_B2,y1
-		mac		y0,x0,b
-		mac		y1,x0,a	
+		mac	y0,x0,b
+		mac	y1,x0,a	
 		
 		MULFIX
 		MULFIXB
 		move	y0,a
 		DIV						;en x1 me queda el resultado
 		DIVFIX
-final	move	x:RESULT,y0
+final		move	x:RESULT,y0
 		move	#>32,x0	
-		mpy		x0,y0,a
+		mpy	x0,y0,a
 		move	a0,x0
 		move	x0,a
-		add		x1,a
+		add	x1,a
 								;CORREGIR EL RESULTADO
 								;CHEQUIÄ
 								;DEJALO EN MUESTRAS
 											;LA MITAD DE MUESTRAS, GIL
 											;Resultado en a en MN
 
-fin		move	#$200000,a
+fin		;move	#$200000,a
 		rts		
 	
 	

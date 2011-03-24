@@ -37,6 +37,8 @@ flags		ds		1
 WINDOW_SIZE	ds		1
 LOOP_SIZE	ds			1
 RESULT		ds		1
+SUMA		ds		1
+SUMA_CNT	ds		1
 ACF			ds		512
 
 ks_l		ds		1
@@ -83,7 +85,7 @@ main
 		move	#0,y0
 		move	y0,y:vel
 		move	#$00FEB8,y0
-		move	y0,y:ks_r
+		move	y0,x:ks_r
 		move	#$200000,y0
 		move	y0,x:t
 		move	#0,x0
@@ -101,6 +103,7 @@ inifil		move    #inbuf,r0      ;point to input buffer
 		move    #BUFSIZE-1,m0     ;mod(BUFSIZE)
 		move	#inbuf,r1
 		move    #BUFSIZE-1,m1 		;mod(BUFSIZE) (puntero para bloques)
+		move	#BUFSIZE-1,m2
 		move	#BUFSIZE-1,m3
 	;	move    #outbuf,r4      	;point to output buffer
 	;	move    #BUFSIZE-1,m4     	;mod(BUFSIZE)
