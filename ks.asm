@@ -22,7 +22,7 @@ ks_start	move	#$010000,a
 		move	#KS_K,x0
 		sub	x0,a				;a = 1/f - 0.25	
 		
-		and	#$FF0000,a							
+		and	#$FF8000,a							
 		move	a,x:ks_l			; saco floor y guardo en ks_l
 		
 		; b  = sin( f * (1.5+L) - 1 ) / sin( f * (0.5-L) + 1 )
@@ -62,8 +62,17 @@ ks_start	move	#$010000,a
 		move	x1,x:ks_b			; guardo valor de b en ks_b
 		
 ;filtro del ks
-		brclr	#STARTKS,x:(r6),ks_main
+		brclr	#STOPKS,x:(r6),ks_sigo
+		bclr	#STOPKS,x:(r6)
+		
+		move	#$00E979,y0
+		move	y0,y:ks_r
+
+ks_sigo	brclr	#STARTKS,x:(r6),ks_main
 		bclr	#STARTKS,x:(r6)
+		
+		move	#$00FEB8,y0
+		move	y0,y:ks_r
 		
 		move	#>$3,x1
 		move	x1,y:ks_cnt	; Si es Nueva nota refresco x(n) con la delta. 

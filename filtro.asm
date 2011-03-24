@@ -31,16 +31,17 @@ datout  	equ     $fffe           ;location in Y memory of output file
 ;========data===========================
        	org     x:0
 inbuf  		dsm     	BUFSIZE        ;buffer de entrada
-endinbuf	equ		*
-bits		ds		1
+endinbuf	equ			*
+bits		ds			1
 flags		ds		1
 WINDOW_SIZE	ds		1
-LOOP_SIZE	ds		1
+LOOP_SIZE	ds			1
 RESULT		ds		1
 ACF			ds		512
 
 ks_l		ds		1
 ks_b		ds		1
+ks_r		ds		1
 f		ds		1
 t		ds		1
 
@@ -81,6 +82,8 @@ main
 		move	#KS_BUFSIZE-1,m7
 		move	#0,y0
 		move	y0,y:vel
+		move	#$00FEB8,y0
+		move	y0,y:ks_r
 		move	#$200000,y0
 		move	y0,x:t
 		move	#0,x0
