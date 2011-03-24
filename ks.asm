@@ -8,6 +8,13 @@ T7			equ	$009969
 KS_K			equ	$004000	; 0.25
  
 ;=== isr ===
+		move	x:bicho,x0
+		tst	x0
+		beq	salto
+		nop
+		move	#1,x:bicho
+salto
+		
 		move	#$7FFFFF,x0
 		move	x0,y:vel
 ;calculo los parametros L y b del KS
@@ -66,13 +73,13 @@ ks_start	move	#$010000,a
 		bclr	#STOPKS,x:(r6)
 		
 		move	#$00E979,y0
-		move	y0,y:ks_r
+		move	y0,x:ks_r
 
 ks_sigo	brclr	#STARTKS,x:(r6),ks_main
 		bclr	#STARTKS,x:(r6)
 		
 		move	#$00FEB8,y0
-		move	y0,y:ks_r
+		move	y0,x:ks_r
 		
 		move	#>$3,x1
 		move	x1,y:ks_cnt	; Si es Nueva nota refresco x(n) con la delta. 
