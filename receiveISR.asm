@@ -101,9 +101,14 @@ finiupi
 		;brclr	#STARTKS,x:(r6),nonote
 		;bclr	#STARTKS,x:(r6)
 		;move	#0.9999,x0
+		;brclr	#DEBUG,x:(r6),doff
+		;bclr	#DEBUG,x:(r6)
+		;move	#$FFFFFF,x0
+		
 		jmp	endisr
 		
-nonote		move	#0,a
+doff		move	#$7FFFFF,a
+		bset #DEBUG,x:(r6)
 		;end debug			
 		move	a,x0 
 		jmp	endisr

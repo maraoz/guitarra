@@ -35,11 +35,13 @@ endinbuf	equ			*
 bits		ds			1
 flags		ds		1
 WINDOW_SIZE	ds		1
-LOOP_SIZE	ds			1
+LOOP_SIZE	ds		1
+LOOP_CNT	ds		1
 RESULT		ds		1
-SUMA		ds		1
-SUMA_CNT	ds		1
-ACF			ds		512
+ACF			ds		256
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+debbuf		dsm		256
+
 
 ks_l		ds		1
 ks_b		ds		1
@@ -105,8 +107,8 @@ inifil		move    #inbuf,r0      ;point to input buffer
 		move    #BUFSIZE-1,m1 		;mod(BUFSIZE) (puntero para bloques)
 		move	#BUFSIZE-1,m2
 		move	#BUFSIZE-1,m3
-	;	move    #outbuf,r4      	;point to output buffer
-	;	move    #BUFSIZE-1,m4     	;mod(BUFSIZE)
+		move    #debbuf,r4      
+		move    #256-1,m4 
 
 		move	#flags,r6
 				
