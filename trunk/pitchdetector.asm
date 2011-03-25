@@ -1,8 +1,11 @@
+		include 'yin.asm'
+
 ONSETF		equ	0
 NENDF		equ	1
 STARTKS		equ	2
 NEWNOTE		equ	3
 STOPKS		equ	4
+DEBUG		equ	5
 
 pitchdetector	equ	*
 		brclr	#ONSETF,x:(r6),*	;espero a un onset
@@ -16,14 +19,13 @@ test32l		brset	#ONSETF,x:(r6),resetpd
 		countsamples
 		blt	test32l
 		move	x1,x:WINDOW_SIZE
-		jsr	yin
+		YIN
 		
 		tst	a
 		beq	test64
-		;bset	#STARTKS,x:(r6)
 		move	a1,x:t
 		brset	#NEWNOTE,x:(r6),kickks
-		bra	continuepd
+		bra		continuepd
 		
 test64		move	#>64,x1
 test64l		brset	#ONSETF,x:(r6),resetpd
@@ -31,7 +33,7 @@ test64l		brset	#ONSETF,x:(r6),resetpd
 		countsamples
 		blt	test64l
 		move	x1,x:WINDOW_SIZE
-		jsr	yin
+		YIN
 		tst	a
 		beq	test128
 		move	a1,x:t
@@ -44,7 +46,7 @@ test128l	brset	#ONSETF,x:(r6),resetpd
 		countsamples
 		blt	test128l
 		move	x1,x:WINDOW_SIZE
-		jsr	yin
+		YIN
 		tst	a
 		beq	test256
 		move	a1,x:t
@@ -57,7 +59,7 @@ test256l	brset	#ONSETF,x:(r6),resetpd
 		countsamples
 		blt	test256l
 		move	x1,x:WINDOW_SIZE
-		jsr	yin
+		YIN
 		tst	a
 		beq	test512
 		move	a1,x:t
@@ -70,7 +72,7 @@ test512l	brset	#ONSETF,x:(r6),resetpd
 		countsamples
 		blt	test512l
 		move	x1,x:WINDOW_SIZE
-		jsr	yin
+		YIN
 		tst	a
 		beq	endnotepd
 		move	a1,x:t
@@ -87,6 +89,7 @@ endnotepd	bset	#STOPKS,x:(r6)
 kickks		bset	#STARTKS,x:(r6)
 		bclr	#NEWNOTE,x:(r6)
 continuepd	move	r2,a
+		move	x:WINDOW_SIZE,x1
 		add	x1,a
 		move	a,r2
 		bra	test32
@@ -95,4 +98,3 @@ continuepd	move	r2,a
 ;yin		;move	#1,a		
 ;		move	#$300000,a1
 ;		rts
-	include 'yin.asm'

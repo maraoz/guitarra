@@ -4,7 +4,7 @@ countsamples	macro
 		move 	r2,b
 		sub	b,a
 		bge	_todomuybien
-		move 	#$000400,b
+		move 	#BUFSIZE,b
 		add	b,a
 _todomuybien	move	x1,b
 		cmp	b,a

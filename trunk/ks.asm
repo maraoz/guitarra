@@ -8,17 +8,13 @@ T7			equ	$009969
 KS_K			equ	$004000	; 0.25
  
 ;=== isr ===
-		move	x:bicho,x0
-		tst	x0
-		beq	salto
-		nop
-		move	#1,x:bicho
-salto
-		
 		move	#$7FFFFF,x0
 		move	x0,y:vel
 ;calculo los parametros L y b del KS
-ks_start	move	#$010000,a
+ks_start	
+		;move	#$200000,a
+		;move	a,x:t
+		move	#$010000,a
 		DIVFIX
 		move	x:t,x0 		;asumo que t esta en x:t, lo guardo en y0 = t	
 		DIV
@@ -112,10 +108,9 @@ ks_mul	move	y:vel,a
 		sub	#>$1,b
 		move	b,y:ks_cnt		
 		
-ks_continua	move	x:ks_l,y1
+ks_continua	move	x:ks_l,b
 
-		move	#$000100,y0
-		mpy	y0,y1,b
+		asr		#15,b,b
 		
 		move	b,n7
 		move	#R,x0
