@@ -12,8 +12,8 @@ KS_K			equ	$004000	; 0.25
 		move	x0,y:vel
 ;calculo los parametros L y b del KS
 ks_start	
-		;move	#$200000,a
-		;move	a,x:t
+		move	#$200000,a
+		move	a,x:t
 		move	#$010000,a
 		DIVFIX
 		move	x:t,x0 		;asumo que t esta en x:t, lo guardo en y0 = t	
@@ -138,12 +138,12 @@ ks_continua	move	x:ks_l,b
 		move	y:(r7+n7),y1
 		mac	x0,y1,a			; A = R*y(n-L-2); A = termino1 + termino2 + termino3
 		
-		move	#>$000001,n7			
-		move	y:(r7+n7),y1
+		move	#>$000001,n7	
+		move	#$020000,y1		
 		mpy	x1,y1,b			; b = b * y(n-1)
 		MULFIXB
-		move	#$020000,x1
-		mac	-y0,x1,a		; b = 2 * b * y(n-1); a = termino1 + termino2 + termino3 - termino 4
+		move	y:(r7+n7),y1
+		mac	-y0,y1,a		; b = 2 * b * y(n-1); a = termino1 + termino2 + termino3 - termino 4
 		MULFIX
 		
 		move	#$008000,x1
