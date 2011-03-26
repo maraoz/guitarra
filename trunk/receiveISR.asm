@@ -6,7 +6,9 @@ ssi_rx_isr
 		movec	a1,ssh
 		movec	a0,ssl
 		movec	a2,ssh
-		
+		movec	b1,ssh
+		movec	b0,ssl
+		movec	b2,ssh
 		
         	movep   x:M_RX0,x0 	       	; Read a/d data
         	move	x:bits,y0
@@ -14,11 +16,6 @@ ssi_rx_isr
         	 
         
 ;ONSET DETECTION
-		;clr 	a
-		;move	n1,a0
-		;inc	a
-		;move	a0,n1
-		
 		move 	x0,a	
 
 		abs	a	x0,x:(r0)+	;guardo la muestra en inbuf, y calculo el abs(x(n))
@@ -119,7 +116,10 @@ esright 	move	#0,x0			;mute the other channel
     
 endisr  	movep   x0,x:M_TX00        	; write d/a data
 		bchg	#Left_ch,x:bits
-		
+
+		movec	ssh,b2
+		movec	ssl,b0
+		movec	ssh,b1		
 		movec	ssh,a2
 		movec	ssl,a0
 		movec	ssh,a1
