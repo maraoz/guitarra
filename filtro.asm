@@ -37,8 +37,8 @@ flags		ds		1
 WINDOW_SIZE	ds		1
 ACF_LOOP_SIZE	ds		1
 ACF_ACCUM	ds		1
-ACF_RESULT		ds		1
-ACF			ds		256
+ACF_RESULT	ds		1
+ACF		ds		256
 
 
 ks_l		ds		1
@@ -49,8 +49,8 @@ t		ds		1
 
 
 decay		dc		0.99975
-envt		dc		0.002
-denvt		dc		0.0006
+envt		dc		0.0025
+denvt		dc		0.000006
 endt		dc		0.0006
 mint		dc		0.003
 
@@ -58,10 +58,11 @@ mint		dc		0.003
 ; variables del KS
 ksbuf		dsm	KS_BUFSIZE
 
-vel			ds	1
+vel		ds		1
 
 ks_cnt		ds		1
 
+env0		ds		1
 env1		ds		1
 env2		ds		1
 denv		ds		1
