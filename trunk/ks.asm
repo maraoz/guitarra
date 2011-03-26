@@ -12,8 +12,8 @@ KS_K			equ	$004000	; 0.25
 		move	x0,y:vel
 ;calculo los parametros L y b del KS
 ks_start	
-		move	#$200000,a
-		move	a,x:t
+		;move	#$1b0000,a
+		;move	a,x:t
 		move	#$010000,a
 		DIVFIX
 		move	x:t,x0 		;asumo que t esta en x:t, lo guardo en y0 = t	

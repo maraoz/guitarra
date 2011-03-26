@@ -1,5 +1,5 @@
 ;=== constantes ===
-MIN_CMP		equ	$00000f	;0.1	????
+MIN_CMP		equ	$0019aa	;0.1	????
 IP_A0	equ		$030000	;3
 IP_A1	equ		$FC0000	;-4
 IP_A2	equ		$010000	;1
@@ -21,14 +21,14 @@ IP_B2	equ		$040000	;4
 		;    d(n)=sum((x(1:N-n+1)-x(n:N)).^2);
 		;end
 YIN		macro
-		;jmp 	_sapo_pepe
+		;jmp 	_fin_yin
 		
 		move	#0,n3	
 		
 		clr		b
 		move	x:WINDOW_SIZE,b0
 		asr	b		
-		move	b0,x:LOOP_SIZE
+		move	b0,x:ACF_LOOP_SIZE
 		
 ;;bigloop
 		do 	b0,_bigloop	;b0
@@ -39,7 +39,7 @@ YIN		macro
 		move	x:WINDOW_SIZE,b		;Dir de inicio, me muevo con r3			
 		sub	x0,b
 ;;littleloop
-		do	b0,_littleloop		;b					
+		do	b1,_littleloop		;b				
 		move 	x:(r3+n3),b	
 		move	x:(r3)+,x1
 		sub 	x1,b
@@ -47,9 +47,8 @@ YIN		macro
 		move	b,x0									;Resto y copio el resultado
 		mac 	x0,x1,a									;Al cuadrado y sumo	
 _littleloop
-		;MULFIX????? MN??
-		;rep	#8
-		asr	#8,a,a
+		;MULFIX
+		asr	#8,a,a				;ALE: alcanza el formato mn para guardar acf?
 		move	#ACF,r3
 		move	a,x:(r3+n3)
 		
@@ -65,42 +64,57 @@ _bigloop
 		;    dp(n)=n*d(n)/dps;
 		;end
 		
+		clr		b
 		clr		a
-		move	x:LOOP_SIZE,a0
+		move		x:ACF_LOOP_SIZE,a0
 		asr		a
-		move	x:(r3)+,x0
+		move		x:(r3)+,x0
 		rep		a0
-		add		x0,b	x:(r3)+,x0
-		move	a0,n3
-		move	#ACF,r3
-		move	#$010000,y0
+		add		x0,b	x:(r3)+,x0	;ALE: alcanza el formato mn para guardar esta suma?
+		move		a0,n3
+		move		n3,x:(r4)+
+		move		#ACF,r3
+		move		#$010000,y1			;ALE: es el maximo?
+		move		b,x:ACF_ACCUM
 ;;LOOP
-		move	x:LOOP_SIZE,a0
-		asr		a
 		do		a0,_loopagain		;a0
 		move	x:(r3+n3),x0
+		move		x:ACF_ACCUM,b
 		add		x0,b					;en b se va acumulando
-		move	n3,x1
+		move		b,x:ACF_ACCUM
+		move	n3,a
+		asl	#16,a,a
+		move		a,x1
 		mpy		x0,x1,a
 		;MULFIX
 		;DIVFIX
 		move	b,x0
-		DIV						;en x1 me queda el resultado				
-		move	x1,x:(r3+n3)	
-		move	y0,a
+		DIV						;en x1 me queda el resultado	
+		move	x1,x:(r3+n3)			;ALE: alcanza el formato mn para guardar esta autocorrelacion?
+		move	y1,a
 										;[dpm,T]=min(dp)	
 		cmp		x1,a
-		blt	_lower						;chequiar si puede haber saltos dentro de un loop
+		ble	_lower						;chequiar si puede haber saltos dentro de un loop
 		
-		move	n3,x:RESULT					;guardo el índice del mínimo
-		move	x1,y0
+		move	n3,x:ACF_RESULT					;guardo el índice del mínimo
+		move	x1,y1
 	
 _lower	clr		a	
 		move	n3,a0
 		inc	a
 		move	a0,n3
 _loopagain
-
+		
+		;-------------------------------------------------------
+		move	#$EEEEEE,x0
+		move	x0,x:(r4)+
+		move	x:WINDOW_SIZE,x0
+		move	x0,x:(r4)+
+		move	n3,x:(r4)+
+		move	x:ACF_RESULT,x0
+		move	x0,x:(r4)+
+		move	y1,x:(r4)+
+		;----------------------------------------------------------
 		;if dp(T)<0.1
 		;    if (T==1)||(T==N/2)
 		;        f=fs/T;
@@ -111,27 +125,28 @@ _loopagain
 		;    end
 		;else
 		;    f=0;
-		;end-------------------------------------------------------
-		move	y0,x:(r4)+
-		;----------------------------------------------------------
+		;end
+		
 		clr	a
-		move	#$010000,x1
+		move	#$008000,x1
 		;bra		_final_yin
 		
-		move	#MIN_CMP,b
-		cmp 	y0,b				;??
+		move	#>MIN_CMP,b
+		cmp 	y1,b				;??
 		ble	_fin_yin
-		clr		b
-		move	x:RESULT,b1
-		cmp		#>$000001,b
+		move	x:ACF_RESULT,x0
+		move	x:ACF_LOOP_SIZE,b
+		sub	#>$000001,b
+		cmp	x0,b					;hay que comparar con N/2-1
+		beq	_final_yin
+		add	#>$000001,b
+		asr	b						
+		cmp		x0,b		;hay que comparar con N/4
 		beq		_final_yin
-		move	x:LOOP_SIZE,y1
-		cmp	y1,b
-		beq	_final_yin						
 		
-		move	#ACF,x0
+		move	#ACF,b
 		add	x0,b
-		dec	b
+		sub	#>$000001,b
 		move	b,r3
 		clr	b
 		move	x:(r3)+,x0
@@ -159,23 +174,22 @@ _loopagain
 		DIV						;en x1 me queda el resultado
 _final_yin
 		clr		a
-		move	x:RESULT,a1
+		move	x:ACF_RESULT,a1
 		asl		#15,a,a
-		;--------------------------------------------
-		move	#$AAAAAA,x0
-		move	x0,x:(r4)+
-		move	a1,x:(r4)+
-		move	x1,x:(r4)+
-		move	#$FFFFFF,x0
-		move	x0,x:(r4)+
-		;--------------------------------------------
-		;sub	#$010000,a
-		;add	x1,a
+		
+		add	x1,a
 								;CORREGIR EL RESULTADO
 								;CHEQUIÄ
 								;DEJALO EN MUESTRAS
 											;LA MITAD DE MUESTRAS, GIL
 											;Resultado en a en MN
+											
+		;--------------------------------------------
+		move	#$AAAAAA,x0
+		move	x0,x:(r4)+
+		move	x1,x:(r4)+
+		move	a1,x:(r4)+
+		;--------------------------------------------
 
 _fin_yin	nop					;move	#$200000,a1
 		
