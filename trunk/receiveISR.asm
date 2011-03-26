@@ -20,7 +20,7 @@ ssi_rx_isr
 
 		abs	a	x0,x:(r0)+	;guardo la muestra en inbuf, y calculo el abs(x(n))
 		
-		move	y:env1,b
+		move	y:env0,b
 		cmp	b,a			; abs(x(n))>=env(n-1)?
 		
 		bge	envge
@@ -29,8 +29,14 @@ ssi_rx_isr
 		mpy 	x0,y0,a			;env*decay->env
 		
 
-envge	move	b,y:env2		; env(n-1)->env2
+envge		move	b,y:env0		; env(n-1)->env0
 
+		move	a,x0
+		
+		mpyi	#0.005,x0,a	y:env1,y0
+		move	y0,y:env2
+		macri	#0,995,y0,a
+		
 		move	a,y:env1		; env(n)->env1
 		
 		
