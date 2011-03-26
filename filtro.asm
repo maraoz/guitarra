@@ -35,9 +35,9 @@ endinbuf	equ			*
 bits		ds			1
 flags		ds		1
 WINDOW_SIZE	ds		1
-LOOP_SIZE	ds		1
-LOOP_CNT	ds		1
-RESULT		ds		1
+ACF_LOOP_SIZE	ds		1
+ACF_ACCUM	ds		1
+ACF_RESULT		ds		1
 ACF			ds		256
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 debbuf		dsm		256
