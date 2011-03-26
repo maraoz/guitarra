@@ -36,7 +36,7 @@ envge		move	b,y:env0		; env(n-1)->env0
 		mpyi	#0.005,x0,a	
 		move	y:env1,y0
 		move	y0,y:env2
-		macri	#0,995,y0,a
+		macri	#0.995,y0,a
 		
 		move	a,y:env1		; env(n)->env1
 		
