@@ -49,8 +49,8 @@ t		ds		1
 
 
 decay		dc		0.99975
-envt		dc		0.0025
-denvt		dc		0.000006
+envt		dc		0.003
+denvt		dc		0.00006
 endt		dc		0.0006
 mint		dc		0.003
 
