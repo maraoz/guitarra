@@ -1,5 +1,5 @@
 
-;=== constantes ===
+;=== constantes ===d
 R			equ	$00FEB8
 T1			equ	$03243F	;Taylor
 T3			equ	$052AEF
