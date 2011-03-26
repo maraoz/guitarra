@@ -30,7 +30,7 @@ datout  	equ     $fffe           ;location in Y memory of output file
 
 ;========data===========================
        	org     x:0
-inbuf  		dsm     	BUFSIZE        ;buffer de entrada
+inbuf  		ds     	BUFSIZE        ;buffer de entrada
 endinbuf	equ			*
 bits		ds			1
 flags		ds		1
@@ -39,8 +39,6 @@ ACF_LOOP_SIZE	ds		1
 ACF_ACCUM	ds		1
 ACF_RESULT		ds		1
 ACF			ds		256
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-debbuf		dsm		256
 
 
 ks_l		ds		1
@@ -49,7 +47,6 @@ ks_r		ds		1
 f		ds		1
 t		ds		1
 
-bicho	ds		1
 
 decay		dc		0.99975
 envt		dc		0.002
@@ -91,7 +88,7 @@ main
 		move	#$200000,y0
 		move	y0,x:t
 		move	#0,x0
-		rep		#KS_BUFSIZE
+		rep	#KS_BUFSIZE
 		move	x0,x:(r7)+
 
 ;==================
@@ -107,8 +104,6 @@ inifil		move    #inbuf,r0      ;point to input buffer
 		move    #BUFSIZE-1,m1 		;mod(BUFSIZE) (puntero para bloques)
 		move	#BUFSIZE-1,m2
 		move	#BUFSIZE-1,m3
-		move    #debbuf,r4      
-		move    #256-1,m4 
 
 		move	#flags,r6
 				
