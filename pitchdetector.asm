@@ -20,10 +20,9 @@ test32l		brset	#ONSETF,x:(r6),resetpd
 		blt	test32l
 		move	x1,x:WINDOW_SIZE
 		YIN
-		
 		tst	a
 		beq	test64
-		move	a1,x:t
+		move	a,x:t
 		brset	#NEWNOTE,x:(r6),kickks
 		bra		continuepd
 		
@@ -91,6 +90,7 @@ kickks		bset	#STARTKS,x:(r6)
 continuepd	move	r2,a
 		move	x:WINDOW_SIZE,x1
 		add	x1,a
+		and	#>$0003FF,a
 		move	a,r2
 		bra	test32
 
