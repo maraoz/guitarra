@@ -25,6 +25,7 @@ ks_start
 		move	#KS_K,x0
 		sub	x0,a				;a = 1/f - 0.25	
 		
+		
 		and	#$FF8000,a							
 		move	a,x:ks_l			; saco floor y guardo en ks_l
 		

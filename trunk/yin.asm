@@ -105,16 +105,6 @@ _lower	clr		a
 		move	a0,n3
 _loopagain
 		
-		;-------------------------------------------------------
-		move	#$EEEEEE,x0
-		move	x0,x:(r4)+
-		move	x:WINDOW_SIZE,x0
-		move	x0,x:(r4)+
-		move	n3,x:(r4)+
-		move	x:ACF_RESULT,x0
-		move	x0,x:(r4)+
-		move	y1,x:(r4)+
-		;----------------------------------------------------------
 		;if dp(T)<0.1
 		;    if (T==1)||(T==N/2)
 		;        f=fs/T;
@@ -129,7 +119,7 @@ _loopagain
 		
 		clr	a
 		move	#$008000,x1
-		;bra		_final_yin
+		
 		
 		move	#>MIN_CMP,b
 		cmp 	y1,b				;??
@@ -143,6 +133,8 @@ _loopagain
 		asr	b						
 		cmp		x0,b		;hay que comparar con N/4
 		beq		_final_yin
+		
+		;bra		_final_yin
 		
 		move	#ACF,b
 		add	x0,b
@@ -184,12 +176,6 @@ _final_yin
 											;LA MITAD DE MUESTRAS, GIL
 											;Resultado en a en MN
 											
-		;--------------------------------------------
-		move	#$AAAAAA,x0
-		move	x0,x:(r4)+
-		move	x1,x:(r4)+
-		move	a1,x:(r4)+
-		;--------------------------------------------
 
 _fin_yin	nop					;move	#$200000,a1
 		
