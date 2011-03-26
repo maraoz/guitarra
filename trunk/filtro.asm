@@ -115,6 +115,7 @@ inifil		move    #inbuf,r0      ;point to input buffer
 		move	x0,y:ks_cnt
 		move	x0,x:(r6)
 		move	x0,y:ignore
+		move	x0,y:env0
 		move	x0,y:env1
 		move	x0,y:env2
 ;========================================
