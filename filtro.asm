@@ -6,7 +6,7 @@
 	include 'vectors.asm'  
 	include 'sig24div.asm'
 	include 'countsamples.asm'
-	include	'mightymacroes.asm'
+	include 'mightymacroes.asm'
 	include 'sin.asm'
 	list
 ;******************************************************************************
@@ -47,8 +47,6 @@ ks_r		ds		1
 f		ds		1
 t		ds		1
 
-debuggg	ds		32
-
 decay		dc		0.99975
 envt		dc		0.0015
 denvt		dc		0.00001
@@ -62,8 +60,6 @@ ksbuf		dsm	KS_BUFSIZE
 vel		ds		1
 ks_cnt	ds		1
 
-lastonset	ds		1
-
 env0		ds		1
 env1		ds		1
 env2		ds		1
@@ -72,6 +68,7 @@ lastmin		ds		1
 ignore		ds		1
 innote		ds		1
 
+bajando		ds		1
 
         org     p:$100
 START
@@ -93,9 +90,6 @@ main
 		move	#0,x0
 		rep	#KS_BUFSIZE
 		move	x0,y:(r7)+
-		
-		move	#debuggg,r4
-		move	#31,m4
 
 ;==================
 
@@ -118,6 +112,7 @@ inifil		move    #inbuf,r0      ;point to input buffer
 		move	y0,y:lastmin
 		move	#0,x0
 		move	x0,y:ks_cnt
+		move	x0,y:bajando
 		move	x0,x:(r6)
 		move	x0,y:ignore
 		move	x0,y:env0

@@ -75,6 +75,8 @@ _bigloop
 		move		#ACF,r3
 		move		#$010000,y1			;ALE: es el maximo?
 		move		b,x:ACF_ACCUM
+		move		#0,x0
+		move		x0,x:ACF_RESULT	
 ;;LOOP
 		do		a0,_loopagain		;a0
 		move	x:(r3+n3),x0
@@ -119,12 +121,13 @@ _loopagain
 		clr	a
 		move	#$008000,x1
 		
-		
 		move	#>MIN_CMP,b
 		cmp 	y1,b				;??
 		ble	_fin_yin
 		move	x:ACF_RESULT,x0
 		move	x0,a
+		tst	a
+		beq	_fin_yin
 		move	x:ACF_LOOP_SIZE,b
 		sub	#>$000001,b
 		cmp		x0,b
@@ -173,13 +176,7 @@ _final_yin
 								;DEJALO EN MUESTRAS
 											;LA MITAD DE MUESTRAS, GIL
 											;Resultado en a en MN
-											
-		cmp	#$640000,a
-		bge	_cero
-		cmp	#$0c0000,a
-		ble	_cero
-		bra	_fin_yin
-_cero	clr	a
+
 _fin_yin	nop
 		endm	
 	
