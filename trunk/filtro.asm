@@ -47,20 +47,22 @@ ks_r		ds		1
 f		ds		1
 t		ds		1
 
+debuggg	ds		32
 
 decay		dc		0.99975
-envt		dc		0.003
-denvt		dc		0.00006
+envt		dc		0.0015
+denvt		dc		0.00001
 endt		dc		0.0006
-mint		dc		0.003
+mint		dc		0.001
 
 	org		y:0
 ; variables del KS
 ksbuf		dsm	KS_BUFSIZE
 
 vel		ds		1
+ks_cnt	ds		1
 
-ks_cnt		ds		1
+lastonset	ds		1
 
 env0		ds		1
 env1		ds		1
@@ -90,7 +92,10 @@ main
 		move	y0,x:t
 		move	#0,x0
 		rep	#KS_BUFSIZE
-		move	x0,x:(r7)+
+		move	x0,y:(r7)+
+		
+		move	#debuggg,r4
+		move	#31,m4
 
 ;==================
 
