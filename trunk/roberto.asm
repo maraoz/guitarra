@@ -66,51 +66,73 @@ _bigloop
 		
 		move		x:ACF_LOOP_SIZE,a
 		asr		a
-		move		a,x:ACF_LOOP_SIZE
 		move		x:(r3)+,x0
 		rep		a1
 		add		x0,b	x:(r3)+,x0	;ALE: alcanza el formato mn para guardar esta suma?
 		move		a1,n3
 		move		n3,x:(r4)+
 		move		#ACF,r3
-		move		#MIN_CMP,y1
+		
 		move		b,x:ACF_ACCUM
-_loopagain
-		;do		a0,_loopagain		;a0
-		move	x:(r3+n3),x0
+		move		#0,x1
+		move		x1,x:ACF_RESULT
+		move	#>$000000,y1
+		move	y1,y:bajando
+		move	#>$010000,x0
+_loopagain	;do		a0,_loopagain		;a0
+		move	x:(r3+n3),y0
 		move		x:ACF_ACCUM,b
-		add		x0,b					;en b se va acumulando
+		add		y0,b					;en b se va acumulando
 		move		b,x:ACF_ACCUM
 		move	n3,a
 		asl	#16,a,a
 		move		a,x1
-		mpy		x0,x1,a
+		mpy		y0,x1,a
 		;MULFIX
 		;DIVFIX
 		move	b,x0
 		DIV						;en x1 me queda el resultado	
 		move	x1,x:(r3+n3)			;ALE: alcanza el formato mn para guardar esta autocorrelacion?
-		move	y1,a
+		
+		move	x1,a
+		cmp	x0,a
+		bge	_nobaja
+		
+		move	#>$000001,y1
+		move	y1,y:bajando
+		bra	_overthres
 										;[dpm,T]=min(dp)	
+_nobaja	move	y:bajando,a
+		move	#>$000000,y1
+		move	y1,y:bajando
+		tst	a
+		beq	_overthres
+
+		move	#MIN_CMP,a
 		cmp		x1,a
 		ble	_overthres						;chequiar si puede haber saltos dentro de un loop
 		
-		move	n3,x:ACF_RESULT					;guardo el índice del mínimo
-		move	#>$000002,x1
-		move	x1,x:ACF_LOOP_SIZE
+		clr	a
+		move n3,a0
+		dec	a
+		move	a0,x:ACF_RESULT
+		
+		bra	_encontremin
 	
-_overthres		clr		a	
+_overthres	clr		a	
 		move	n3,a0
 		inc	a
 		move	a0,n3
 		
-		clr		a
-		move		x:ACF_LOOP_SIZE,a0
-		dec		a
-		move		a0,x:ACF_LOOP_SIZE
+		move	x1,x0
+		
+		move		x:ACF_LOOP_SIZE,a
+		asr		a
+		move	n3,y1
+		cmp	y1,a
 		bne		_loopagain		
 ;;loopagain
-		
+
 		;if dp(T)<0.1
 		;    if (T==1)||(T==N/2)
 		;        f=fs/T;
@@ -123,22 +145,21 @@ _overthres		clr		a
 		;    f=0;
 		;end
 		
-		clr	a
+_encontremin	clr	a
 		move	#$008000,x1
 		
-		
-		move	#>MIN_CMP,b
-		cmp 	y1,b				;??
-		ble	_fin_yin
 		move	x:ACF_RESULT,x0
+		move	x0,a
+		tst	a
+		beq	_fin_yin
 		move	x:ACF_LOOP_SIZE,b
 		sub	#>$000001,b
 		cmp	x0,b					;hay que comparar con N/2-1
-		beq	_final_yin
+		ble	_final_yin
 		add	#>$000001,b
 		asr	b						
 		cmp		x0,b		;hay que comparar con N/4
-		beq		_final_yin
+		bge		_final_yin
 		
 		;bra		_final_yin
 		
@@ -174,14 +195,13 @@ _final_yin
 		clr		a
 		move	x:ACF_RESULT,a1
 		asl		#15,a,a
-		
+		sub		#>$008000,a
 		add	x1,a
 								;CORREGIR EL RESULTADO
 								;CHEQUIÄ
 								;DEJALO EN MUESTRAS
 											;LA MITAD DE MUESTRAS, GIL
 											;Resultado en a en MN
-											
 
 _fin_yin	nop					;move	#$200000,a1
 		
