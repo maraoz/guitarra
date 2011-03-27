@@ -8,7 +8,7 @@ T7			equ	$009969
 KS_K			equ	$004000	; 0.25
  
 ;=== isr ===
-		move	#$7FFFFF,x0
+		move	#$400000,x0
 		move	x0,y:vel
 ;calculo los parametros L y b del KS
 ks_start	
@@ -20,7 +20,7 @@ ks_start
 		DIV
 		
 		move	x1,x:f				;guardo la frecuencia a partir del t calculado. 
-		; L = floor (1/f - 0.25)
+		; L = floor (1/f - 0.25)	
 		move 	x:t,a
 		move	#KS_K,x0
 		sub	x0,a				;a = 1/f - 0.25	
@@ -30,7 +30,7 @@ ks_start
 		move	a,x:ks_l			; saco floor y guardo en ks_l
 		
 		; b  = sin( f * (1.5+L) - 1 ) / sin( f * (0.5-L) + 1 )
-		move	#$00C000,a	
+		move	#$00C000,a
 		move	x:ks_l,x0			; cargo 0.75
 		add	x0,a				; 0.75+L = A
 		move	x:f,x0		
@@ -46,7 +46,7 @@ ks_start
 		
 		move	x0,y1				; Queda guardado en Y1, el valor de sin(blabla)
 
-		move	#$004000,a	
+		move	#$004000,a
 		move	x:ks_l,x0	; cargo 0.25
 		sub	x0,a				; 0.25-L = A
 		move	x:f,x0		
@@ -65,21 +65,34 @@ ks_start
 		DIV
 		move	x1,x:ks_b			; guardo valor de b en ks_b
 		
+		move	y:lastonset,a
+		add	#>1,a
+		move	a,y:lastonset
+		
 ;filtro del ks
 		brclr	#STOPKS,x:(r6),ks_sigo
 		bclr	#STOPKS,x:(r6)
 		
-		move	#$00E979,y0
-		move	y0,x:ks_r
+		;move	#$00E979,y0
+		;move	y0,x:ks_r
 
 ks_sigo	brclr	#STARTKS,x:(r6),ks_main
 		bclr	#STARTKS,x:(r6)
+		
+		move	y:lastonset,a
+		;move	a,x:(r4)+
+		clr	a
+		move	a,y:lastonset		
 		
 		move	#$00FEB8,y0
 		move	y0,x:ks_r
 		
 		move	#>$3,x1
 		move	x1,y:ks_cnt	; Si es Nueva nota refresco x(n) con la delta. 
+		
+		move	#0,x0
+		rep	#KS_BUFSIZE
+		move	x0,y:(r7)+
 		
 ks_main	clr	a	y:ks_cnt,b
 		tst	b
@@ -114,6 +127,7 @@ ks_continua	move	x:ks_l,b
 		asr		#15,b,b
 		
 		move	b,n7
+		
 		move	#R,x0
 		move	x:ks_b,x1
 		mpy	x1,x0,b			; b = R*b

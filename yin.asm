@@ -72,7 +72,6 @@ _bigloop
 		rep		a0
 		add		x0,b	x:(r3)+,x0	;ALE: alcanza el formato mn para guardar esta suma?
 		move		a0,n3
-		move		n3,x:(r4)+
 		move		#ACF,r3
 		move		#$010000,y1			;ALE: es el maximo?
 		move		b,x:ACF_ACCUM
@@ -125,16 +124,15 @@ _loopagain
 		cmp 	y1,b				;??
 		ble	_fin_yin
 		move	x:ACF_RESULT,x0
+		move	x0,a
 		move	x:ACF_LOOP_SIZE,b
 		sub	#>$000001,b
-		cmp	x0,b					;hay que comparar con N/2-1
-		beq	_final_yin
-		add	#>$000001,b
+		cmp		x0,b
+		ble		_final_yin
+		add 	#>$000001,b
 		asr	b						
-		cmp		x0,b		;hay que comparar con N/4
-		beq		_final_yin
-		
-		;bra		_final_yin
+		cmp	x0,b		;hay que comparar con N/4
+		bge	_final_yin
 		
 		move	#ACF,b
 		add	x0,b
@@ -168,7 +166,7 @@ _final_yin
 		clr		a
 		move	x:ACF_RESULT,a1
 		asl		#15,a,a
-		
+		sub	#$008000,a
 		add	x1,a
 								;CORREGIR EL RESULTADO
 								;CHEQUIÄ
@@ -176,9 +174,13 @@ _final_yin
 											;LA MITAD DE MUESTRAS, GIL
 											;Resultado en a en MN
 											
-
-_fin_yin	nop					;move	#$200000,a1
-		
+		cmp	#$640000,a
+		bge	_cero
+		cmp	#$0c0000,a
+		ble	_cero
+		bra	_fin_yin
+_cero	clr	a
+_fin_yin	nop
 		endm	
 	
 	

@@ -29,17 +29,16 @@ ssi_rx_isr
 		mpy 	x0,y0,a			;env*decay->env
 		
 
-envge		move	b,y:env0		; env(n-1)->env0
+envge	move	a,y:env0		; env(n-1)->env0	
 
 		move	a,x0
 		
 		mpyi	#0.005,x0,a	
 		move	y:env1,y0
 		move	y0,y:env2
-		macri	#0.995,y0,a
+		maci	#0.995,y0,a
 		
 		move	a,y:env1		; env(n)->env1
-		
 		
 		move 	y:ignore,b		;estoy ignorando?
 		tst 	b
@@ -111,8 +110,8 @@ finiupi
 		
 		jmp	endisr
 		
-doff		move	#$7FFFFF,a
-		bset #DEBUG,x:(r6)
+nonote		move	#0,a
+		;bset #DEBUG,x:(r6)
 		;end debug			
 		move	a,x0 
 		jmp	endisr
