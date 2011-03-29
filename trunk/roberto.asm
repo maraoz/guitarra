@@ -64,53 +64,55 @@ _bigloop
 		;    dp(n)=n*d(n)/dps;
 		;end
 		
-		move		x:ACF_LOOP_SIZE,a
+		clr		b
+		move		x:ACF_LOOP_SIZE,a0
 		asr		a
+		move		a0,n3
+		dec		a
 		move		x:(r3)+,x0
-		rep		a1
+		rep		a0
 		add		x0,b	x:(r3)+,x0	;ALE: alcanza el formato mn para guardar esta suma?
-		move		a1,n3
-		move		n3,x:(r4)+
-		move		#ACF,r3
-		
 		move		b,x:ACF_ACCUM
+		
+		move		#ACF,r3
+			
 		move		#0,x1
 		move		x1,x:ACF_RESULT
-		move	#>$000000,y1
-		move	y1,y:bajando
-		move	#>$010000,x0
-_loopagain	;do		a0,_loopagain		;a0
-		move	x:(r3+n3),y0
+		move		x1,y:bajando
+		move		#>$010000,y1
+		
+_loopagain
+		move		x:(r3+n3),x0
 		move		x:ACF_ACCUM,b
-		add		y0,b					;en b se va acumulando
+		add		x0,b					;en b se va acumulando
 		move		b,x:ACF_ACCUM
 		move	n3,a
 		asl	#16,a,a
 		move		a,x1
-		mpy		y0,x1,a
+		mpy		x0,x1,a
 		;MULFIX
 		;DIVFIX
 		move	b,x0
-		DIV						;en x1 me queda el resultado	
+		DIV
 		move	x1,x:(r3+n3)			;ALE: alcanza el formato mn para guardar esta autocorrelacion?
 		
 		move	x1,a
-		cmp	x0,a
+		cmp	y1,a
 		bge	_nobaja
 		
-		move	#>$000001,y1
-		move	y1,y:bajando
+		move	#>$000001,y0
+		move	y0,y:bajando
 		bra	_overthres
 										;[dpm,T]=min(dp)	
 _nobaja	move	y:bajando,a
-		move	#>$000000,y1
-		move	y1,y:bajando
+		move	#>$000000,y0
+		move	y0,y:bajando
 		tst	a
 		beq	_overthres
 
 		move	#MIN_CMP,a
 		cmp		x1,a
-		ble	_overthres						;chequiar si puede haber saltos dentro de un loop
+		ble	_overthres
 		
 		clr	a
 		move n3,a0
@@ -124,12 +126,11 @@ _overthres	clr		a
 		inc	a
 		move	a0,n3
 		
-		move	x1,x0
+		move		x1,y1
 		
 		move		x:ACF_LOOP_SIZE,a
-		asr		a
-		move	n3,y1
-		cmp	y1,a
+		move	n3,y0
+		cmp	y0,a
 		bne		_loopagain		
 ;;loopagain
 
@@ -152,14 +153,14 @@ _encontremin	clr	a
 		move	x0,a
 		tst	a
 		beq	_fin_yin
-		move	x:ACF_LOOP_SIZE,b
-		sub	#>$000001,b
-		cmp	x0,b					;hay que comparar con N/2-1
-		ble	_final_yin
-		add	#>$000001,b
-		asr	b						
-		cmp		x0,b		;hay que comparar con N/4
-		bge		_final_yin
+		;move	x:ACF_LOOP_SIZE,b
+		;sub	#>$000001,b
+		;cmp	x0,b					;hay que comparar con N/2-1
+		;ble	_final_yin
+		;add	#>$000001,b
+		;asr	b						
+		;cmp		x0,b		;hay que comparar con N/4
+		;bge		_final_yin
 		
 		;bra		_final_yin
 		
