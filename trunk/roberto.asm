@@ -1,5 +1,5 @@
 ;=== constantes ===
-MIN_CMP		equ	$0019aa	;0.1	????
+MIN_CMP		equ	$0019aa	;0.1  0019aa	????
 IP_A0	equ		$030000	;3
 IP_A1	equ		$FC0000	;-4
 IP_A2	equ		$010000	;1
@@ -65,21 +65,22 @@ _bigloop
 		;end
 		
 		clr		b
-		move		x:ACF_LOOP_SIZE,a0
+		clr		a
+		move	x:ACF_LOOP_SIZE,a0
 		asr		a
-		move		a0,n3
+		move	a0,n3
 		dec		a
-		move		x:(r3)+,x0
+		move	x:(r3)+,x0
 		rep		a0
 		add		x0,b	x:(r3)+,x0	;ALE: alcanza el formato mn para guardar esta suma?
 		move		b,x:ACF_ACCUM
 		
 		move		#ACF,r3
 			
-		move		#0,x1
-		move		x1,x:ACF_RESULT
-		move		x1,y:bajando
-		move		#>$010000,y1
+		move		#0,x0
+		move		x0,x:ACF_RESULT
+		move		x0,y:bajando
+		move		#$010000,y1
 		
 _loopagain
 		move		x:(r3+n3),x0
@@ -110,8 +111,8 @@ _nobaja	move	y:bajando,a
 		tst	a
 		beq	_overthres
 
-		move	#MIN_CMP,a
-		cmp		x1,a
+		move	#>MIN_CMP,a
+		cmp		y1,a
 		ble	_overthres
 		
 		clr	a
@@ -146,12 +147,10 @@ _overthres	clr		a
 		;    f=0;
 		;end
 		
-_encontremin	clr	a
+_encontremin	
 		move	#$008000,x1
-		
-		move	x:ACF_RESULT,x0
-		move	x0,a
-		tst	a
+		move	x:ACF_RESULT,a
+		tst		a
 		beq	_fin_yin
 		;move	x:ACF_LOOP_SIZE,b
 		;sub	#>$000001,b
@@ -162,12 +161,12 @@ _encontremin	clr	a
 		;cmp		x0,b		;hay que comparar con N/4
 		;bge		_final_yin
 		
-		;bra		_final_yin
-		
-		move	#ACF,b
-		add	x0,b
-		sub	#>$000001,b
-		move	b,r3
+		bra		_final_yin
+		move	#ACF,x0
+		add		x0,a
+		sub		#>$000001,a
+		move	a,r3
+		clr	a
 		clr	b
 		move	x:(r3)+,x0
 		move	#IP_A0,y0
