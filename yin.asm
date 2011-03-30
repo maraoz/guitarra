@@ -68,13 +68,16 @@ _bigloop
 		clr		a
 		move		x:ACF_LOOP_SIZE,a0
 		asr		a
-		move		x:(r3)+,x0
+		move	a0,n3
+		dec		a
+		move	x:(r3)+,x0
 		rep		a0
 		add		x0,b	x:(r3)+,x0	;ALE: alcanza el formato mn para guardar esta suma?
-		move		a0,n3
-		move		#ACF,r3
-		move		#$010000,y1			;ALE: es el maximo?
 		move		b,x:ACF_ACCUM
+		
+		move		#ACF,r3
+		
+		move		#$010000,y1			;ALE: es el maximo?
 		move		#0,x0
 		move		x0,x:ACF_RESULT	
 ;;LOOP

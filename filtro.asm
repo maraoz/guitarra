@@ -50,7 +50,7 @@ t		ds		1
 decay		dc		0.99975
 envt		dc		0.0015
 denvt		dc		0.00001
-endt		dc		0.0006
+endt		dc		0.000006
 mint		dc		0.001
 
 	org		y:0
