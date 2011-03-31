@@ -25,15 +25,14 @@ YIN		macro
 		
 		move	#0,n3	
 		
-		clr		b
-		move	x:WINDOW_SIZE,b0
+		move	x:WINDOW_SIZE,b
 		asr	b		
-		move	b0,x:ACF_LOOP_SIZE
+		move	b,x:ACF_LOOP_SIZE
 		
 ;;bigloop
-		do 	b0,_bigloop	;b0
+		do 	b1,_bigloop	;b0
 		
-		clr	a		
+		clr		a
 		move	r2,r3
 		move	n3,x0	
 		move	x:WINDOW_SIZE,b		;Dir de inicio, me muevo con r3			
@@ -51,11 +50,10 @@ _littleloop
 		asr	#8,a,a				;ALE: alcanza el formato mn para guardar acf?
 		move	#ACF,r3
 		move	a,x:(r3+n3)
-		
-		clr		b	
-		move	n3,b0		
-		inc	b
-		move	b0,n3
+			
+		move	n3,b		
+		add		#>$000001,b
+		move	b,n3
 
 _bigloop
 
@@ -65,13 +63,12 @@ _bigloop
 		;end
 		
 		clr		b
-		clr		a
-		move	x:ACF_LOOP_SIZE,a0
+		move	x:ACF_LOOP_SIZE,a
 		asr		a
-		move	a0,n3
-		dec		a
+		move	a,n3
+		sub		#>$000001,a
 		move	x:(r3)+,x0
-		rep		a0
+		rep		a1
 		add		x0,b	x:(r3)+,x0	;ALE: alcanza el formato mn para guardar esta suma?
 		move		b,x:ACF_ACCUM
 		
@@ -115,17 +112,16 @@ _nobaja	move	y:bajando,a
 		cmp		y1,a
 		ble	_overthres
 		
-		clr	a
-		move n3,a0
-		dec	a
-		move	a0,x:ACF_RESULT
+		move n3,a
+		sub	#>$000001,a
+		move	a,x:ACF_RESULT
 		
 		bra	_encontremin
 	
-_overthres	clr		a	
-		move	n3,a0
-		inc	a
-		move	a0,n3
+_overthres	
+		move	n3,a
+		add		#>$000001,a
+		move	a,n3
 		
 		move		x1,y1
 		
@@ -169,20 +165,14 @@ _encontremin
 		clr	a
 		clr	b
 		move	x:(r3)+,x0
-		move	#IP_A0,y0
-		move	#IP_B0,y1
-		mac	y0,x0,b
-		mac	y1,x0,a
+		maci	#IP_A0,x0,b
+		maci	#IP_B0,x0,a
 		move	x:(r3)+,x0
-		move	#IP_A1,y0
-		move	#IP_B1,y1
-		mac	y0,x0,b
-		mac	y1,x0,a		;;??
+		maci	#IP_A1,x0,b
+		maci	#IP_B1,x0,a		;;??
 		move	x:(r3),x0
-		move	#IP_A2,y0
-		move	#IP_B2,y1
-		mac	y0,x0,b
-		mac	y1,x0,a
+		maci	#IP_A2,x0,b
+		maci	#IP_B2,x0,a
 		
 		
 		

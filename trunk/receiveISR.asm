@@ -1,4 +1,11 @@
 ssi_rx_isr
+		;---------------------------------
+		bchg	#0,x:M_HDR
+		nop
+		nop
+		nop
+		movep	#$0001,x:M_HDR
+		;---------------------------------
 		movec	x1,ssh
 		movec	x0,ssl
 		movec	y1,ssh
@@ -13,12 +20,17 @@ ssi_rx_isr
         	movep   x:M_RX0,x0 	       	; Read a/d data
         	move	x:bits,y0
         	jset    #Left_ch,y0,esright
-        	 
-        
+        	
+COEFF1	equ	0.5
+COEFF2	equ	0.5
 ;ONSET DETECTION
-		move 	x0,a	
+		;move 	x0,a
 
-		abs	a	x0,x:(r0)+	;guardo la muestra en inbuf, y calculo el abs(x(n))
+		move	x:(r0)+,y0
+		mpyi 	#COEFF1,x0,a
+		maci	#COEFF2,y0,a		
+
+		abs	a	x0,x:(r0)	;guardo la muestra en inbuf, y calculo el abs(x(n))
 		
 		move	y:env0,b
 		cmp	b,a			; abs(x(n))>=env(n-1)?
@@ -106,12 +118,12 @@ finiupi
 		;move	#0.9999,x0
 		;brclr	#DEBUG,x:(r6),doff
 		;bclr	#DEBUG,x:(r6)
-		;move	#$FFFFFF,x0
+		;move	#$7FFFFF,x0
 		
 		jmp	endisr
 		
-nonote		move	#0,a
-		;bset #DEBUG,x:(r6)
+doff		move	#0,a
+		bset #DEBUG,x:(r6)
 		;end debug			
 		move	a,x0 
 		jmp	endisr
@@ -120,7 +132,12 @@ nonote		move	#0,a
 	
 esright 	move	#0,x0			;mute the other channel
     
-endisr  	movep   x0,x:M_TX00        	; write d/a data
+endisr  
+		;---------------------------------
+		movep	#$0000,x:M_HDR
+		;---------------------------------	
+
+		movep   x0,x:M_TX00        	; write d/a data
 		bchg	#Left_ch,x:bits
 
 		movec	ssh,b2
