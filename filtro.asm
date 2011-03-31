@@ -47,10 +47,10 @@ ks_r		ds		1
 f		ds		1
 t		ds		1
 
-decay		dc		0.99975
+decay		dc		0.99979
 envt		dc		0.0015
 denvt		dc		0.00001
-endt		dc		0.000006
+endt		dc		0.00000006
 mint		dc		0.001
 
 	org		y:0
