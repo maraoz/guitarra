@@ -1,4 +1,4 @@
-		include 'roberto.asm'
+		include 'yin.asm'
 
 ONSETF		equ	0
 NENDF		equ	1
@@ -9,12 +9,12 @@ DEBUG		equ	5
 
 pitchdetector	equ	*
 		brclr	#ONSETF,x:(r6),*	;espero a un onset
-onseton		bset	#NEWNOTE,x:(r6)		
+onseton	bset	#NEWNOTE,x:(r6)		
 		bclr	#ONSETF,x:(r6)
 		move	r1,r2
 		
-test32		move	#>32,x1
-test32l		brset	#ONSETF,x:(r6),resetpd
+test32	move	#>32,x1
+test32l	brset	#ONSETF,x:(r6),resetpd
 		brset	#NENDF,x:(r6),endnotepd
 		countsamples
 		blt	test32l
@@ -25,8 +25,8 @@ test32l		brset	#ONSETF,x:(r6),resetpd
 		move	a,x:t
 		brset	#NEWNOTE,x:(r6),kickks
 		bra		continuepd
-test64		move	#>64,x1
-test64l		brset	#ONSETF,x:(r6),resetpd
+test64	move	#>64,x1
+test64l	brset	#ONSETF,x:(r6),resetpd
 		brset	#NENDF,x:(r6),endnotepd
 		countsamples
 		blt	test64l
@@ -38,7 +38,7 @@ test64l		brset	#ONSETF,x:(r6),resetpd
 		brset	#NEWNOTE,x:(r6),kickks
 		bra	continuepd
 		
-test128		move	#>128,x1
+test128	move	#>128,x1
 test128l	brset	#ONSETF,x:(r6),resetpd
 		brset	#NENDF,x:(r6),endnotepd
 		countsamples
@@ -51,7 +51,7 @@ test128l	brset	#ONSETF,x:(r6),resetpd
 		brset	#NEWNOTE,x:(r6),kickks
 		bra	continuepd
 
-test256		move	#>256,x1
+test256	move	#>256,x1
 test256l	brset	#ONSETF,x:(r6),resetpd
 		brset	#NENDF,x:(r6),endnotepd
 		countsamples
@@ -64,7 +64,7 @@ test256l	brset	#ONSETF,x:(r6),resetpd
 		brset	#NEWNOTE,x:(r6),kickks
 		bra	continuepd
 
-test512		move	#>512,x1
+test512	move	#>512,x1
 test512l	brset	#ONSETF,x:(r6),resetpd
 		brset	#NENDF,x:(r6),endnotepd
 		countsamples
@@ -76,21 +76,8 @@ test512l	brset	#ONSETF,x:(r6),resetpd
 		move	a,x:t
 		brset	#NEWNOTE,x:(r6),kickks
 		bra	continuepd
-		
-;test1024		move	#>1024,x1
-;test1024l	brset	#ONSETF,x:(r6),resetpd
-;		brset	#NENDF,x:(r6),endnotepd
-;		countsamples
-;		blt	test1024l
-;		move	x1,x:WINDOW_SIZE
-;		YIN
-;		tst	a
-;		beq	endnotepd
-;		move	a,x:t
-;		brset	#NEWNOTE,x:(r6),kickks
-;		bra	continuepd
 				
-resetpd		equ	onseton
+resetpd	equ	onseton
 
 endnotepd	bset	#STOPKS,x:(r6)
 		bclr	#NENDF,x:(r6)
@@ -102,12 +89,7 @@ continuepd	move	r2,a
 		move	x:WINDOW_SIZE,x1
 		add	x1,a
 		cmp #>BUFSIZE,a
-		blt sarasa	
+		blt nosepaso	
 		sub	#>BUFSIZE,a		
-sarasa	move	a,r2
+nosepaso	move	a,r2
 		bra	test32
-
-;debug
-;yin		;move	#1,a		
-;		move	#$300000,a1
-;		rts
