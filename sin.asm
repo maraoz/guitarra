@@ -1,4 +1,4 @@
-;asumo que me pasan el valor en x0 y tambien lo devuelvo en x0 (x0 = sin(a) ). Se pierde el valor de B	
+;asumo que me pasan el valor en x0 y tambien lo devuelvo en x0 (x0 = sin(a) ). Se pierde todo menos y1
 ; recibe el valor/pi y devuelve valor/pi
 SIN			macro			
 			movec	y1,ssh
