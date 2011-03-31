@@ -1,11 +1,4 @@
 ssi_rx_isr
-		;---------------------------------
-		;bchg	#0,x:M_HDR
-		;nop
-		;nop
-		;nop
-		;movep	#$0001,x:M_HDR
-		;---------------------------------
 		movec	x1,ssh
 		movec	x0,ssl
 		movec	y1,ssh
@@ -24,7 +17,6 @@ ssi_rx_isr
 COEFF1	equ	0.5
 COEFF2	equ	0.5
 ;ONSET DETECTION
-		;move 	x0,a
 
 		move	x:(r0)+,y0
 		mpyi 	#COEFF1,x0,a
@@ -85,12 +77,10 @@ yesonset	bset 	#1,y:innote
 		move 	a,y:ignore
 							;flags para main
 		move	r0,r1
-		;move	#0,n1
 		bset	#ONSETF,x:(r6)
 		move	y:env1,y0
 		move	y0,y:vel	
-		;move 	#0.999,a 		;DEBUG
-		jmp	finiupi
+		jmp	finos
 
 ignoring	dec 	b
 		move 	b,y:ignore
@@ -106,26 +96,13 @@ endnote		bclr	#1,y:innote
 		bset	#NENDF,x:(r6)
 		move	#0.999,y0
 		move	y0,y:lastmin
-noend		;move 	#0,a 			;DEBUG
+noend
 
 ;FIN DE ONSET DETECTION
 	
-finiupi	
+finos	
 		include 'ks.asm'
-		;debug
-		;brclr	#STARTKS,x:(r6),nonote
-		;bclr	#STARTKS,x:(r6)
-		;move	#0.9999,x0
-		;brclr	#DEBUG,x:(r6),doff
-		;bclr	#DEBUG,x:(r6)
-		;move	#$7FFFFF,x0
-		
-		jmp	endisr
-		
-doff		move	#0,a
-		bset #DEBUG,x:(r6)
-		;end debug			
-		move	a,x0 
+
 		jmp	endisr
 	       
 
@@ -133,9 +110,7 @@ doff		move	#0,a
 esright 	move	#0,x0			;mute the other channel
     
 endisr  
-		;---------------------------------
-		;movep	#$0000,x:M_HDR
-		;---------------------------------	
+
 
 		movep   x0,x:M_TX00        	; write d/a data
 		bchg	#Left_ch,x:bits

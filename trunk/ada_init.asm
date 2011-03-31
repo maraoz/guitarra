@@ -245,7 +245,7 @@ ssi_tx_isr
 
 ;********************* SSI TRANSMIT LAST SLOT ISR **************************
 ssi_txls_isr
-  	;bset	#Left_ch,x:bits
+  ;	bset	#Left_ch,x:bits
         rti
  
 ;************************** SSI receive ISR ********************************
