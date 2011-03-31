@@ -30,45 +30,40 @@ datout  	equ     $fffe           ;location in Y memory of output file
 
 ;========data===========================
        	org     x:0
-;variables de comunicacion dentre bloques
 inbuf  		ds     	BUFSIZE        ;buffer de entrada
-endinbuf		equ		*
-bits			ds		1
+endinbuf	equ			*
+bits		ds			1
 flags		ds		1
 WINDOW_SIZE	ds		1
-
-;variables de YIN
 ACF_LOOP_SIZE	ds		1
-ACF_ACCUM		ds		1
+ACF_ACCUM	ds		1
 ACF_RESULT	ds		1
-ACF			ds		256
+ACF		ds		256
 
-;variables de ks
-ks_l			ds		1
-ks_b			ds		1
-ks_r			ds		1
-f			ds		1
-t			ds		1
 
-;variables del detector de onset
+ks_l		ds		1
+ks_b		ds		1
+ks_r		ds		1
+f		ds		1
+t		ds		1
+
 decay		dc		0.99979
-envt			dc		0.0015
+envt		dc		0.0015
 denvt		dc		0.00001
-endt			dc		0.00000006
-mint			dc		0.001
+endt		dc		0.00000006
+mint		dc		0.001
 
 	org		y:0
 ; variables del KS
 ksbuf		dsm	KS_BUFSIZE
 
-vel			ds		1
-ks_cnt		ds		1
+vel		ds		1
+ks_cnt	ds		1
 
-;variables del detector de onset
-env0			ds		1
-env1			ds		1
-env2			ds		1
-denv			ds		1
+env0		ds		1
+env1		ds		1
+env2		ds		1
+denv		ds		1
 lastmin		ds		1
 ignore		ds		1
 innote		ds		1
@@ -103,10 +98,10 @@ main
 
 
 	
-inifil	move #inbuf,r0      ;point to input buffer
-		move #BUFSIZE-1,m0     ;mod(BUFSIZE)
+inifil		move    #inbuf,r0      ;point to input buffer
+		move    #BUFSIZE-1,m0     ;mod(BUFSIZE)
 		move	#inbuf,r1
-		move #BUFSIZE-1,m1 		;mod(BUFSIZE) (puntero para bloques)
+		move    #BUFSIZE-1,m1 		;mod(BUFSIZE) (puntero para bloques)
 		move	#BUFSIZE-1,m2
 		move	#BUFSIZE-1,m3
 
@@ -130,14 +125,16 @@ inifil	move #inbuf,r0      ;point to input buffer
 ;      Inicializo port b for test
 ;=====================================
 
-		movep	#$0001,X:M_HPCR 	;Port B I/O mode select
-		movep	#$0001,X:M_HDDR 	;PB0 out
+		;movep	#$0001,X:M_HPCR 	;Port B I/O mode select
+		;movep	#$0001,X:M_HDDR 	;PB0 out
        
   
 
 ;========================================
  
-	     jsr     ada_init            	;initialize codec
+	        jsr     ada_init            	;initialize codec
+
+;ACA VA EL PITCH DETECT, MOTHERFUCKERS  
 
 		include	'pitchdetector.asm'
         	
